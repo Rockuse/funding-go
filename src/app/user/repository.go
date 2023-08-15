@@ -4,8 +4,9 @@ import "gorm.io/gorm"
 
 type Repository interface {
 	Save(user User) (User, error)
-	Get(user User, param int) ([]User, error)
-	GetAll() ([]User, error)
+	Get(user User) ([]User, error)
+	GetAll(user User) ([]User, error)
+	Delete(user User) (User, error)
 }
 
 type repository struct {
@@ -24,11 +25,20 @@ func (r *repository) Save(user User) (User, error) {
 	return user, nil
 }
 
-// func (r *repository) Get(user User, param int) ([]User, error) {
-// 	var users []User
-// 	users, err := r.db.Find(&user, "id=?", string(param))
-// 	if err != nil {
-// 		return users, err
-// 	}
-// 	return users, nil
-// }
+func (r *repository) Get(param int) ([]User, error) {
+	var users []User
+	err := r.db.Find(&users, "id = ?", param).Error
+	if err != nil {
+		return users, err
+	}
+	return users, nil
+}
+
+func (r *repository) GetAll() ([]User, error) {
+	var users []User
+	err := r.db.Find(&users).Error
+	if err != nil {
+		return users, err
+	}
+	return users, nil
+}
