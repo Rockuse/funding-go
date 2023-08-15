@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"funding/src/app/user"
-	"funding/src/config"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -16,11 +15,13 @@ func main() {
 		fmt.Println(err)
 	}
 	userRepository := user.NewRepository(db)
-	user := user.User{
-		Id:   config.Uuid(),
-		Name: "test",
-	}
-	userRepository.Save(user)
+	userService := user.NewService(userRepository)
+	userInput := user.RegisterInput{}
+	userInput.Name = "Nurul"
+	userInput.Email = "nurularifah@gmail.com"
+	userInput.Occupation = "Ibu Rumah Tangga"
+	userInput.Password = "Jadi kie"
+	userService.RegisterUser(userInput)
 	fmt.Println("Connection is good")
 	// router := gin.Default()
 	// router.GET("/handler", user.UserHandler)
