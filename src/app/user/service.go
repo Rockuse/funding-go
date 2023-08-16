@@ -11,6 +11,7 @@ type RegisterInput struct {
 
 type Service interface {
 	RegisterUser(input RegisterInput) (User, error)
+	// GetAllUser(users User) ([]User, error)
 }
 
 type service struct {

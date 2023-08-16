@@ -1,25 +1,25 @@
 package helper
 
-type response struct {
-	meta meta
-	data interface{}
+type Response struct {
+	Meta Meta        `json:"meta"`
+	Data interface{} `json:"data"`
 }
 
-type meta struct {
-	message string
-	code    uint8
-	status  string
+type Meta struct {
+	Message string
+	Code    uint16
+	Status  string
 }
 
-func ResponseHelper(message string, code uint8, status string, data interface{}) response {
-	meta := meta{
-		message: message,
-		code:    code,
-		status:  status,
+func ResponseHelper(message string, code uint16, status string, data interface{}) Response {
+	meta := Meta{
+		Message: message,
+		Code:    code,
+		Status:  status,
 	}
-	response := response{
-		meta: meta,
-		data: data,
+	responseJSON := Response{
+		Meta: meta,
+		Data: data,
 	}
-	return response
+	return responseJSON
 }
