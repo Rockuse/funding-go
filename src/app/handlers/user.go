@@ -24,14 +24,16 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		fmt.Println(err)
 		c.JSON(http.StatusBadRequest, nil)
 	}
-	user, err := h.userService.RegisterUser(input)
-	fmt.Println(user)
+	newUser, err := h.userService.RegisterUser(input)
+	fmt.Println(newUser)
 	if err != nil {
-		response := helper.ResponseHelper("Data Gagal disimpan", 400, "Fail", user)
+		response := helper.ResponseHelper("Data Gagal disimpan", 400, "Fail", newUser)
 		fmt.Println(response)
 		c.JSON(http.StatusBadRequest, response)
 	}
-	response := helper.ResponseHelper("Data berhasil disimpan", 200, "sukses", user)
+	// token, err := h.jwtService.GenerateToken()
+	formater := user.FormatUser(newUser, "token")
+	response := helper.ResponseHelper("Data berhasil disimpan", 200, "sukses", formater)
 	c.JSON(http.StatusOK, response)
 }
 

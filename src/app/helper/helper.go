@@ -6,20 +6,20 @@ type Response struct {
 }
 
 type Meta struct {
-	Message string
-	Code    uint16
-	Status  string
+	Message string `json:"message"`
+	Code    uint16 `json:"code"`
+	Status  string `json:"status"`
 }
 
 func ResponseHelper(message string, code uint16, status string, data interface{}) Response {
-	meta := Meta{
+	Meta := Meta{
 		Message: message,
 		Code:    code,
 		Status:  status,
 	}
-	responseJSON := Response{
-		Meta: meta,
+	ResponseJSON := Response{
+		Meta: Meta,
 		Data: data,
 	}
-	return responseJSON
+	return ResponseJSON
 }
