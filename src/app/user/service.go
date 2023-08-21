@@ -1,6 +1,10 @@
 package user
 
-import "golang.org/x/crypto/bcrypt"
+import (
+	"time"
+
+	"golang.org/x/crypto/bcrypt"
+)
 
 type RegisterInput struct {
 	Name       string
@@ -33,6 +37,10 @@ func (s *service) RegisterUser(input RegisterInput) (User, error) {
 	}
 	user.Password = string(passwordHash)
 	user.Role = "user"
+	user.CreatedDate = time.Now()
+	user.ModifiedDate = time.Now()
+	user.CreatedBy = "Fahmi"
+	user.ModifiedBy = "Fahmi"
 	newUser, err := s.repository.Save(user)
 	if err != nil {
 		return newUser, err
