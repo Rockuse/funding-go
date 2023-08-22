@@ -40,11 +40,11 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
-// func (h *userHandler) GetAllUsers(c *gin.Context) {
-// 	var users []user.User
-// 	h.userService.GetAllUser(&users)
-// }
-
-// func (h *userHandler) GetUser(c *gin.Context) {
-
-// }
+func (h *userHandler) Login(c *gin.Context) {
+	//User input
+	//input ditangkap handler
+	//mapping dari input user ke "input struct login"
+	//"input struct login" passing ke user service
+	//service mencari data user menggunakan repository (user,email)
+	//cocokan password
+}
