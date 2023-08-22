@@ -20,13 +20,17 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 	var input user.RegisterInput
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
-		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", err.Error())
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
-		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusBadRequest, "Fail", nil)
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusBadRequest, "Fail", errorMessage)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
