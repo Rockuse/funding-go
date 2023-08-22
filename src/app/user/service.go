@@ -6,12 +6,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-type RegisterInput struct {
-	Name       string
-	Occupation string
-	Email      string
-	Password   string
-}
+
 
 type Service interface {
 	RegisterUser(input RegisterInput) (User, error)
