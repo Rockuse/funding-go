@@ -20,6 +20,13 @@ func main() {
 	userService := user.NewService(userRepository)
 	userHandler := handler.NewUserHandler(userService)
 	router := gin.Default()
+	input := user.LoginInput{Email: "fahmi.muza@gmail.com", Password: "Passivea"}
+	userData, err := user.Service.Login(userService, input)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(userData, "tes")
+
 	api := router.Group("/api/v1")
 	api.POST("/user", userHandler.RegisterUser)
 	router.Run()
