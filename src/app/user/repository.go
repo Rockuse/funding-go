@@ -5,8 +5,9 @@ import "gorm.io/gorm"
 type Repository interface {
 	Save(user User) (User, error)
 	// Get(param int) ([]User, error)
-	FindByEmail(email string) (User, error)
+	// GetAll(user []User) ([]User, error)
 	// Delete(user User) (User, error)
+	FindByEmail(email string) (User, error)
 }
 
 type repository struct {
@@ -34,19 +35,27 @@ func (r *repository) FindByEmail(email string) (User, error) {
 	return userData, nil
 }
 
-func (r *repository) Get(param int) ([]User, error) {
-	var users []User
-	err := r.db.Find(&users, "id=?", param).Error
-	if err != nil {
-		return users, err
-	}
-	return users, nil
-}
+// func (r *repository) Get(param int) ([]User, error) {
+// 	var users []User
+// 	err := r.db.Find(&users, "id=?", param).Error
+// 	if err != nil {
+// 		return users, err
+// 	}
+// 	return users, nil
+// }
 
-func (r *repository) Delete(users User, param int) (User, error) {
-	err := r.db.Delete(&users, "id=?", param)
-	if err != nil {
-		return users, nil
-	}
-	return users, nil
-}
+// func (r *repository) GetAll(users []User) ([]User, error) {
+// 	err := r.db.Find(&users).Error
+// 	if err != nil {
+// 		return users, err
+// 	}
+// 	return users, nil
+// }
+
+// func (r *repository) Delete(users User, param int) (User, error) {
+// 	err := r.db.Delete(&users, "id=?", param)
+// 	if err != nil {
+// 		return users, nil
+// 	}
+// 	return users, nil
+// }

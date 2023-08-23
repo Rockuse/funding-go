@@ -1,6 +1,7 @@
 package helper
 
 import (
+	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
 
@@ -28,11 +29,12 @@ func ResponseHelper(message string, code uint16, status string, data interface{}
 	return ResponseJSON
 }
 
-func FormatValidationError(err error) []string {
+func FormatValidationError(err error) gin.H {
 	var errors []string
 	for _, e := range err.(validator.ValidationErrors) {
 		errors = append(errors, e.Error())
 	}
+	errorMessage := gin.H{"errors": errors}
 
-	return errors
+	return errorMessage
 }
