@@ -34,3 +34,7 @@ type LoginInput struct {
 type EmailInput struct {
 	Email string `json:"email" binding:"required,email"`
 }
+
+type AvatarInput struct {
+	Avatar_file_name string
+}

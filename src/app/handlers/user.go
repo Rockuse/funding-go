@@ -98,3 +98,12 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 	//service panggil repo find email
 	//apabila ada return error, apabila tidak ada sukses
 }
+
+func (h *userHandler) UploadAvatar(c *gin.Context) {
+	// upload user foto
+	// simpan gambar di folder /images
+	// di service panggil repo
+	// tambahkan JWT
+	// repo ambil data user  id=1
+	// repo update lokasi avatar user id=1
+}
