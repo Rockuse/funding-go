@@ -66,6 +66,29 @@ func (h *userHandler) Login(c *gin.Context) {
 }
 
 func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
+	var email user.EmailInput
+	err := c.ShouldBindJSON(&email)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		response := helper.ResponseHelper("format Email salah", http.StatusUnprocessableEntity, "fail", errors)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+	isValid, err := h.userService.IsEmailAvailable(email)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Email gagal di cek", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	if !isValid {
+		errors := gin.H{"errors": "Email sudah terdaftar"}
+		response := helper.ResponseHelper("Email sudah terdaftar", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	response := helper.ResponseHelper("Email tersedia", http.StatusOK, "success", nil)
+	c.JSON(http.StatusOK, response)
 	//user input email
 	//input email ditangkap handler
 	//input email mapping ke struct

@@ -31,6 +31,7 @@ func main() {
 	api := router.Group("/api/v1")
 	api.POST("/user", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
+	api.POST("/checkemail", userHandler.CheckEmailAvailibility)
 	router.Run()
 	fmt.Println("Connection is good")
 	// router := gin.Default()

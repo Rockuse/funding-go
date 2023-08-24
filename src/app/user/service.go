@@ -10,7 +10,7 @@ import (
 type Service interface {
 	RegisterUser(input RegisterInput) (User, error)
 	Login(input LoginInput) (User, error)
-	CheckEmailAvailibility(input EmailInput) (string, error)
+	IsEmailAvailable(input EmailInput) (bool, error)
 }
 
 type service struct {
@@ -60,14 +60,14 @@ func (s *service) Login(input LoginInput) (User, error) {
 	return userData, nil
 }
 
-func (s *service) CheckEmailAvailibility(input EmailInput) (string, error) {
+func (s *service) IsEmailAvailable(input EmailInput) (bool, error) {
 	email := input.Email
 	userData, err := s.repository.FindByEmail(email)
 	if err != nil {
-		return "Error", err
+		return false, err
 	}
 	if userData.Email != "" {
-		return "Email sudah pernah digunakan", nil
+		return false, nil
 	}
-	return "Email bisa digunakan!", nil
+	return true, nil
 }
