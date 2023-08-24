@@ -87,7 +87,8 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	response := helper.ResponseHelper("Email tersedia", http.StatusOK, "success", nil)
+	data := gin.H{"is_available": isValid}
+	response := helper.ResponseHelper("Email tersedia", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 	//user input email
 	//input email ditangkap handler
