@@ -100,6 +100,32 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {
+	file, err := c.FormFile("avatar")
+	if err != nil {
+		errors := gin.H{"is_uploaded": false}
+		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	path := "public/images/" + file.Filename
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		errors := gin.H{"is_uploaded": false}
+		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	//dapat dari JWT
+	userID := 1
+	_, err = h.userService.UpdateAvatar(userID, path)
+	if err != nil {
+		errors := gin.H{"is_uploaded": false}
+		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	data := gin.H{"is_uploaded": true}
+	c.JSON(http.StatusOK, data)
 	// upload user foto
 	// simpan gambar di folder /images
 	// di service panggil repo
