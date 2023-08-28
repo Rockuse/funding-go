@@ -1,19 +1,23 @@
 package handler
 
 import (
+	"fmt"
+	"funding/src/app/auth"
 	"funding/src/app/helper"
 	"funding/src/app/user"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 type userHandler struct {
 	userService user.Service
+	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service) *userHandler {
-	return &userHandler{userService}
+func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
+	return &userHandler{userService, authService}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
@@ -32,8 +36,14 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	// token, err := h.jwtService.GenerateToken()
-	formater := user.FormatUser(newUser, "token")
+	token, err := h.authService.GenerateToken(newUser.Id)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	formater := user.FormatUser(newUser, token)
 	response := helper.ResponseHelper("Data berhasil disimpan", http.StatusOK, "success", formater)
 	c.JSON(http.StatusOK, response)
 }
@@ -54,7 +64,14 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formatter := user.FormatUser(userLogin, "testing")
+	token, err := h.authService.GenerateToken(userLogin.Id)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	formatter := user.FormatUser(userLogin, token)
 	response := helper.ResponseHelper("Berhasil Login", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 	//User input
@@ -107,7 +124,9 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	path := "public/images/" + file.Filename
+	//dapat dari JWT
+	userID := 1
+	path := fmt.Sprintf("public/images/%d-%s", userID, file.Filename)
 	err = c.SaveUploadedFile(file, path)
 	if err != nil {
 		errors := gin.H{"is_uploaded": false}
@@ -115,8 +134,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	//dapat dari JWT
-	userID := 1
+
 	_, err = h.userService.UpdateAvatar(userID, path)
 	if err != nil {
 		errors := gin.H{"is_uploaded": false}
@@ -132,4 +150,24 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	// tambahkan JWT
 	// repo ambil data user  id=1
 	// repo update lokasi avatar user id=1
+}
+
+func (h *userHandler) GetUserDataById(c *gin.Context) {
+	idstr := c.Param("id")
+	id, err := strconv.Atoi(idstr)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Error", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+	}
+	userData, err := h.userService.GetUserById(id)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Error", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	formater := user.FormatUser(userData, "tes")
+	response := helper.ResponseHelper("Get User", http.StatusOK, "success", formater)
+	c.JSON(http.StatusOK, response)
 }

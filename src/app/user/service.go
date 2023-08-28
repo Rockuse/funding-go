@@ -12,6 +12,8 @@ type Service interface {
 	Login(input LoginInput) (User, error)
 	IsEmailAvailable(input EmailInput) (bool, error)
 	UpdateAvatar(ID int, filepath string) (User, error)
+	GetUserById(ID int) (User, error)
+	UpdateToken(ID int, token string) (User, error)
 }
 
 type service struct {
@@ -82,6 +84,27 @@ func (s *service) UpdateAvatar(ID int, filepath string) (User, error) {
 		return user, errors.New("User Not Found")
 	}
 	user.Avatar_file_name = filepath
+	updatedUser, err := s.repository.Update(user)
+	if err != nil {
+		return updatedUser, err
+	}
+	return updatedUser, nil
+}
+
+func (s *service) GetUserById(ID int) (User, error) {
+	user, err := s.repository.FindById(ID)
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
+func (s *service) UpdateToken(ID int, token string) (User, error) {
+	user, err := s.repository.FindById(ID)
+	if err != nil {
+		return user, err
+	}
+	user.Token = token
 	updatedUser, err := s.repository.Update(user)
 	if err != nil {
 		return updatedUser, err

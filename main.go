@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"funding/src/app/auth"
 	handler "funding/src/app/handlers"
 	"funding/src/app/user"
 
@@ -16,9 +17,16 @@ func main() {
 	if err != nil {
 		fmt.Println(err)
 	}
+	authService := auth.NewService()
 	userRepository := user.NewRepository(db)
 	userService := user.NewService(userRepository)
-	userHandler := handler.NewUserHandler(userService)
+	userHandler := handler.NewUserHandler(userService, authService)
+
+	id, err := authService.GenerateToken(28)
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println(id)
 	router := gin.Default()
 
 	// input := user.LoginInput{Email: "fahmi.muza@gmail.com", Password: "Passivea"}
@@ -30,6 +38,7 @@ func main() {
 
 	api := router.Group("/api/v1")
 	api.POST("/user", userHandler.RegisterUser)
+	api.GET("/user/:id", userHandler.GetUserDataById)
 	api.POST("/login", userHandler.Login)
 	api.POST("/checkemail", userHandler.CheckEmailAvailibility)
 	api.POST("/avatar", userHandler.UploadAvatar)
