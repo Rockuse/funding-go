@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"funding/src/app/auth"
 	handler "funding/src/app/handlers"
+	"funding/src/app/helper"
 	"funding/src/app/user"
+	"net/http"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/driver/postgres"
@@ -41,10 +44,27 @@ func main() {
 	api.GET("/user/:id", userHandler.GetUserDataById)
 	api.POST("/login", userHandler.Login)
 	api.POST("/checkemail", userHandler.CheckEmailAvailibility)
-	api.POST("/avatar", userHandler.UploadAvatar)
+	api.POST("/avatar", authMiddleware, userHandler.UploadAvatar)
 	router.Run()
 	fmt.Println("Connection is good")
 	// router := gin.Default()
 	// router.GET("/handler", user.UserHandler)
 	// router.Run()
+}
+
+func authMiddleware(authService auth.Service) {
+	return func(c *gin.Context) {
+		authHeader := c.GetHeader("Authorization")
+		if !strings.Contains(authHeader, "Bearer") {
+			response := helper.ResponseHelper("Unauthorized", http.StatusUnauthorized, "fail", nil)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		var tokenString string
+		arrayToken := strings.Split(authHeader, " ")
+		if len(arrayToken) == 2 {
+			tokenString = arrayToken[1]
+		}
+	}
+
 }

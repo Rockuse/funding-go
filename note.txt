@@ -4,3 +4,9 @@
 
 
   input -> handler -> service -> repo -> db
+
+  Build 
+  User
+  Login
+  Avatar/Picture
+  Auth Token
