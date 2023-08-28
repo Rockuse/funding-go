@@ -12,6 +12,7 @@ import (
 )
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
 	dns := "host=satao.db.elephantsql.com user=sxelyaew password=3r9FiVZVfvCtli4eR4ZiL9bb0KYTItW_ dbname=sxelyaew port=5432"
 	db, err := gorm.Open(postgres.Open(dns), &gorm.Config{})
 	if err != nil {
@@ -22,13 +23,12 @@ func main() {
 	userService := user.NewService(userRepository)
 	userHandler := handler.NewUserHandler(userService, authService)
 
-	id, err := authService.GenerateToken(28)
+	router := gin.Default()
+	token, err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOH0.qTeE7BjV5FQbGqb4gznvjqlsi-QPD8HUek0_EoNO8iU")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(id)
-	router := gin.Default()
-
+	fmt.Println(token.Valid)
 	// input := user.LoginInput{Email: "fahmi.muza@gmail.com", Password: "Passivea"}
 	// userData, err := user.Service.Login(userService, input)
 	// if err != nil {
