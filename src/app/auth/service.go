@@ -40,7 +40,7 @@ func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {
 		return []byte(SECRET_KEY), nil
 	})
 	if err != nil {
-		return toke, err
+		return toke, errors.New("Validate Error")
 	}
 	return toke, nil
 }

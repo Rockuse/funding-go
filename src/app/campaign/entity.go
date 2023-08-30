@@ -1,6 +1,8 @@
 package campaign
 
-import "time"
+import (
+	"time"
+)
 
 type Campaign struct {
 	Id             int
@@ -31,8 +33,9 @@ type CampaignImage struct {
 }
 
 type CampaignInput struct {
-	UserId      int    `json:"userid" binding:"required"`
+	UserId      int    `json:"userid"`
 	Name        string `json:"name" binding:"required"`
 	ShortDesc   string `json:"shortdesc" binding:"required"`
 	Description string `json:"description"`
+	CreatedBy   string
 }

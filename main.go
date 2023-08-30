@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"funding/src/app/auth"
+	"funding/src/app/campaign"
 	handler "funding/src/app/handlers"
 	"funding/src/app/helper"
 	"funding/src/app/user"
@@ -27,12 +28,14 @@ func main() {
 	userService := user.NewService(userRepository)
 	userHandler := handler.NewUserHandler(userService, authService)
 
+	campaignRepository := campaign.NewRepository(db)
+	campaignService := campaign.NewService(campaignRepository)
+	campaignHandler := handler.NewCampaignHandler(campaignService, authService)
+
 	router := gin.Default()
-	token, err := authService.ValidateToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjoyOH0.qTeE7BjV5FQbGqb4gznvjqlsi-QPD8HUek0_EoNO8iU")
 	if err != nil {
 		fmt.Println(err)
 	}
-	fmt.Println(token.Valid)
 	// input := user.LoginInput{Email: "fahmi.muza@gmail.com", Password: "Passivea"}
 	// userData, err := user.Service.Login(userService, input)
 	// if err != nil {
@@ -46,6 +49,9 @@ func main() {
 	api.POST("/login", userHandler.Login)
 	api.POST("/checkemail", userHandler.CheckEmailAvailibility)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UploadAvatar)
+
+	api.GET("/campaign", authMiddleware(authService, userService), campaignHandler.GetListCampaign)
+	api.POST("/campaign", authMiddleware(authService, userService), campaignHandler.SaveCampaign)
 	router.Run()
 	fmt.Println("Connection is good")
 	// router := gin.Default()
@@ -68,13 +74,13 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		}
 		token, err := authService.ValidateToken(tokenString)
 		if err != nil {
-			response := helper.ResponseHelper("Unauthorized", http.StatusUnauthorized, "fail", err)
+			response := helper.ResponseHelper("Unauthorized 1", http.StatusUnauthorized, "fail", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 		claim, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			response := helper.ResponseHelper("Unauthorized", http.StatusUnauthorized, "fail", err)
+			response := helper.ResponseHelper("Unauthorized 2", http.StatusUnauthorized, "fail", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
