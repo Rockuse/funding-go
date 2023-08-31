@@ -37,6 +37,22 @@ func (h *handler) GetListCampaign(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 
+func (h *handler) GetListCampaignById(c *gin.Context) {
+	var list []campaign.CampaignFormat
+	campaignList, err := h.campaignService.FindByUserId(int(c.Param("id")))
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	for _, data := range campaignList {
+		list = append(list, campaign.FormatCampaign(data))
+	}
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", list)
+	c.JSON(http.StatusOK, response)
+}
+
 func (h *handler) SaveCampaign(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(user.User)
 	var input campaign.CampaignInput

@@ -44,7 +44,7 @@ func (s *service) FindAll() ([]Campaign, error) {
 		return campaignList, err
 	}
 	if len(campaignList) == 0 {
-		return campaignList, errors.New("Not Found")
+		return campaignList, errors.New("not found")
 	}
 	return campaignList, nil
 }
@@ -55,7 +55,7 @@ func (s *service) FindByUserId(userId int) ([]Campaign, error) {
 		return campaignData, err
 	}
 	if len(campaignData) == 0 {
-		return campaignData, errors.New("Data not found")
+		return campaignData, errors.New("data not found")
 	}
 	return campaignData, nil
 }
