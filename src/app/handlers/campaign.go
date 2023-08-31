@@ -39,7 +39,9 @@ func (h *handler) GetListCampaign(c *gin.Context) {
 
 func (h *handler) GetListCampaignById(c *gin.Context) {
 	var list []campaign.CampaignFormat
-	campaignList, err := h.campaignService.FindByUserId(int(c.Param("id")))
+	currentUser := c.MustGet("currentUser").(user.User)
+	userId := currentUser.Id
+	campaignList, err := h.campaignService.FindByUserId(userId)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
