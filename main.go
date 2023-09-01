@@ -50,8 +50,8 @@ func main() {
 	api.POST("/checkemail", userHandler.CheckEmailAvailibility)
 	api.POST("/avatar", authMiddleware(authService, userService), userHandler.UploadAvatar)
 
+	// api.GET("/campaign", campaignHandler.GetListCampaign)
 	api.GET("/campaign", authMiddleware(authService, userService), campaignHandler.GetListCampaign)
-	api.GET("/campaign/:id", authMiddleware(authService, userService), campaignHandler.GetListCampaign)
 	api.POST("/campaign", authMiddleware(authService, userService), campaignHandler.SaveCampaign)
 	router.Run()
 	fmt.Println("Connection is good")
