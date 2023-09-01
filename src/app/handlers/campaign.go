@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"funding/src/app/auth"
 	"funding/src/app/campaign"
 	"funding/src/app/helper"
 	"funding/src/app/user"
@@ -13,11 +12,10 @@ import (
 
 type handler struct {
 	campaignService campaign.Service
-	authService     auth.Service
 }
 
-func NewCampaignHandler(campaignService campaign.Service, authService auth.Service) *handler {
-	return &handler{campaignService, authService}
+func NewCampaignHandler(campaignService campaign.Service) *handler {
+	return &handler{campaignService}
 }
 
 func (h *handler) GetListCampaign(c *gin.Context) {

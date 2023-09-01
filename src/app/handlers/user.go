@@ -16,8 +16,8 @@ type userHandler struct {
 	authService auth.Service
 }
 
-func NewUserHandler(userService user.Service, authService auth.Service) *userHandler {
-	return &userHandler{userService, authService}
+func NewUserHandler(userService user.Service) *userHandler {
+	return &userHandler{userService, auth.NewService()}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
