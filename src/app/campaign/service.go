@@ -56,6 +56,7 @@ func (s *service) FindByUserId(userId int) ([]Campaign, error) {
 	}
 	if len(campaignData) == 0 {
 		return campaignData, errors.New("data not found")
+
 	}
 	return campaignData, nil
 }

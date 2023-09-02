@@ -36,9 +36,17 @@ func (h *handler) GetListCampaign(c *gin.Context) {
 }
 
 func (h *handler) GetListCampaignById(c *gin.Context) {
-	var list []campaign.CampaignFormat
+	// var list []campaign.CampaignFormat
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.Id
+	// id := c.Param("id")
+	// userId, err := strconv.Atoi(id)
+	// if err != nil {
+	// 	errors := gin.H{"errors": err}
+	// 	response := helper.ResponseHelper("Error Param", http.StatusBadRequest, "fail", errors)
+	// 	c.JSON(http.StatusBadRequest, response)
+	// 	return
+	// }
 	campaignList, err := h.campaignService.FindByUserId(userId)
 	if err != nil {
 		errors := gin.H{"errors": err}
@@ -46,10 +54,10 @@ func (h *handler) GetListCampaignById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	for _, data := range campaignList {
-		list = append(list, campaign.FormatCampaign(data))
-	}
-	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", list)
+	// for _, data := range campaignList {
+	// 	list = append(list, campaign.FormatCampaign(data))
+	// }
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", campaignList)
 	c.JSON(http.StatusOK, response)
 }
 

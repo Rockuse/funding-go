@@ -18,6 +18,7 @@ var CampaignModule = Module{
 		campaignHandler := handler.NewCampaignHandler(campaignService)
 
 		api.GET("/campaign", midService.AuthMiddleware(), campaignHandler.GetListCampaign)
+		api.GET("/campaign/detail", midService.AuthMiddleware(), campaignHandler.GetListCampaignById)
 		api.POST("/campaign", midService.AuthMiddleware(), campaignHandler.SaveCampaign)
 	},
 }

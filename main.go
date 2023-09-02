@@ -11,7 +11,7 @@ func main() {
 	// gin.SetMode(gin.ReleaseMode)
 	db := db.InitDB()
 	app := server.NewServer(db) //*gorm.DB
-	server.ConfigureRoutes(app)
+	app.ConfigureRoutes()
 	if err := app.Run(); err != nil {
 		log.Panic(err)
 	}

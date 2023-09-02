@@ -19,6 +19,7 @@ type Campaign struct {
 	CreatedDate    time.Time
 	CreatedBy      string
 	ModifiedBy     string
+	CampaignImages []CampaignImage
 }
 
 type CampaignImage struct {
