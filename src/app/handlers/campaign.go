@@ -19,23 +19,21 @@ func NewCampaignHandler(campaignService campaign.Service) *handler {
 }
 
 func (h *handler) GetListCampaign(c *gin.Context) {
-	var list []campaign.CampaignFormat
-	campaignList, err := h.campaignService.FindAll()
+	host := c.Request.URL.Host
+	campaignArr, err := h.campaignService.FindAll()
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-
-	for _, data := range campaignList {
-		list = append(list, campaign.FormatCampaign(data))
-	}
-	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", list)
+	formated := campaign.FormatAllCampaigns(campaignArr, host)
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
 
 func (h *handler) GetListCampaignById(c *gin.Context) {
+	host := c.Request.URL.Host
 	// var list []campaign.CampaignFormat
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.Id
@@ -47,21 +45,20 @@ func (h *handler) GetListCampaignById(c *gin.Context) {
 	// 	c.JSON(http.StatusBadRequest, response)
 	// 	return
 	// }
-	campaignList, err := h.campaignService.FindByUserId(userId)
+	campaignArr, err := h.campaignService.FindByUserId(userId)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	// for _, data := range campaignList {
-	// 	list = append(list, campaign.FormatCampaign(data))
-	// }
-	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", campaignList)
+	formated := campaign.FormatAllCampaigns(campaignArr, host)
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
 
 func (h *handler) SaveCampaign(c *gin.Context) {
+	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	var input campaign.CampaignInput
 	err := c.ShouldBindJSON(&input)
@@ -80,7 +77,7 @@ func (h *handler) SaveCampaign(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formated := campaign.FormatCampaign(data)
+	formated := campaign.FormatCampaign(data, host)
 	response := helper.ResponseHelper("Campaign Saved", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }

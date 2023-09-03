@@ -18,8 +18,8 @@ var UserModule = Module{
 		userHandler := handler.NewUserHandler(userService)
 
 		userApi := api.Group("/user")
-		userApi.POST("/user", userHandler.RegisterUser)
-		userApi.GET("/user/:id", userHandler.GetUserDataById)
+		userApi.POST("/", userHandler.RegisterUser)
+		userApi.GET("/:id", userHandler.GetUserDataById)
 		userApi.POST("/login", userHandler.Login)
 		userApi.POST("/checkemail", userHandler.CheckEmailAvailibility)
 		userApi.POST("/avatar", midService.AuthMiddleware(), userHandler.UploadAvatar)

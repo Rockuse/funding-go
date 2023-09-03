@@ -38,3 +38,17 @@ func FormatValidationError(err error) gin.H {
 
 	return errorMessage
 }
+
+func PathUpload(dst ...string) (string, string) {
+	path := "public/images"
+	file := ""
+	for _, str := range dst {
+
+		if str == "" {
+			continue
+		}
+		path += "/" + str
+		file += "/" + str
+	}
+	return path, file
+}

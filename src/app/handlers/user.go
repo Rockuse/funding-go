@@ -1,7 +1,6 @@
 package handler
 
 import (
-	"fmt"
 	"funding/src/app/auth"
 	"funding/src/app/helper"
 	"funding/src/app/user"
@@ -127,8 +126,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	//dapat dari JWT
 	currentUser := c.MustGet("currentUser").(user.User)
 	userID := currentUser.Id
-	path := fmt.Sprintf("public/images/%d-%s", userID, file.Filename)
-	err = c.SaveUploadedFile(file, path)
+	pathUpload, pathName := helper.PathUpload("user", strconv.Itoa(userID), file.Filename)
+	err = c.SaveUploadedFile(file, pathUpload)
 	if err != nil {
 		errors := gin.H{"is_uploaded": false}
 		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
@@ -136,7 +135,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 
-	_, err = h.userService.UpdateAvatar(userID, path)
+	_, err = h.userService.UpdateAvatar(userID, pathName)
 	if err != nil {
 		errors := gin.H{"is_uploaded": false}
 		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)

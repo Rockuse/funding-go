@@ -1,6 +1,7 @@
 package server
 
 import (
+	handler "funding/src/app/handlers"
 	"funding/src/routes"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,7 @@ func (s *Server) ConfigureRoutes() {
 	}
 	db := s.db
 	api := s.engine.Group("/api/v1")
+	api.GET("/images/:folder", handler.SendFile)
 	for _, m := range module {
 		m.Routes(api, db)
 	}
