@@ -25,8 +25,10 @@ func (s *Server) ConfigureRoutes() {
 		routes.UserModule,
 		routes.CampaignModule,
 	}
+	router := s.engine
+	router.Static("/images", "./public/images")
 	db := s.db
-	api := s.engine.Group("/api/v1")
+	api := router.Group("/api/v1")
 	api.GET("/images/:folder", handler.SendFile)
 	for _, m := range module {
 		m.Routes(api, db)

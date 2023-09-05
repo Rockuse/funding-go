@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"funding/src/app/user"
 	"time"
 )
 
@@ -20,6 +21,7 @@ type Campaign struct {
 	CreatedBy      string
 	ModifiedBy     string
 	CampaignImages []CampaignImage
+	User           user.User
 }
 
 type CampaignImage struct {

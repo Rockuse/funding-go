@@ -13,6 +13,7 @@ type CampaignFormat struct {
 	ImageURL       string    `json:"image_url"`
 	GoalAmmount    int       `json:"goal_ammount"`
 	CurrentAmmount int       `json:"current_ammount"`
+	Slug           string    `json:"slug"`
 	CreatedDate    time.Time `json:"created_date"`
 	CreatedBy      string    `json:"create_dby"`
 }
@@ -26,11 +27,12 @@ func FormatCampaign(data Campaign, host string) CampaignFormat {
 		ImageURL:       "",
 		GoalAmmount:    data.GoalAmmount,
 		CurrentAmmount: data.CurrentAmmount,
+		Slug:           data.Slug,
 		CreatedDate:    data.CreatedDate,
 		CreatedBy:      data.CreatedBy,
 	}
 	if len(data.CampaignImages) > 0 {
-		formater.ImageURL = host + "/public/images/" + strconv.Itoa(data.CampaignImages[0].Id)
+		formater.ImageURL = host + "/images/" + strconv.Itoa(data.CampaignImages[0].Id)
 	}
 
 	return formater

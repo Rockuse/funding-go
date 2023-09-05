@@ -9,6 +9,7 @@ type Service interface {
 	SaveCampaign(input CampaignInput) (Campaign, error)
 	FindAll() ([]Campaign, error)
 	FindByUserId(userId int) ([]Campaign, error)
+	GetCampaignById(id int) (Campaign, error)
 }
 
 type service struct {
@@ -57,6 +58,17 @@ func (s *service) FindByUserId(userId int) ([]Campaign, error) {
 	if len(campaignData) == 0 {
 		return campaignData, errors.New("data not found")
 
+	}
+	return campaignData, nil
+}
+
+func (s *service) GetCampaignById(id int) (Campaign, error) {
+	campaignData, err := s.repository.FindById(id)
+	if err != nil {
+		return campaignData, err
+	}
+	if campaignData.Id == 0 {
+		return campaignData, errors.New("campaign not found")
 	}
 	return campaignData, nil
 }

@@ -8,6 +8,7 @@ type Repository interface {
 	Save(campaign Campaign) (Campaign, error)
 	FindAll() ([]Campaign, error)
 	FindByUserId(userID int) ([]Campaign, error)
+	FindById(ID int) (Campaign, error)
 }
 
 type repository struct {
@@ -37,6 +38,15 @@ func (r *repository) FindAll() ([]Campaign, error) {
 func (r *repository) FindByUserId(userID int) ([]Campaign, error) {
 	var campaignData []Campaign
 	err := r.db.Preload("CampaignImages", "campaign_images.is_primary =true").Find(&campaignData, "user_id=?", userID).Error
+	if err != nil {
+		return campaignData, err
+	}
+	return campaignData, nil
+}
+
+func (r *repository) FindById(ID int) (Campaign, error) {
+	var campaignData Campaign
+	err := r.db.Preload("User").Preload("CampaignImages").Find(&campaignData, "id=?", ID).Error
 	if err != nil {
 		return campaignData, err
 	}
