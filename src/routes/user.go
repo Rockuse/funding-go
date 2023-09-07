@@ -18,7 +18,7 @@ var UserModule = Module{
 		userHandler := handler.NewUserHandler(userService)
 
 		userApi := api.Group("/user")
-		userApi.POST("/", userHandler.RegisterUser)
+		userApi.POST("/", userHandler.CheckEmailAvailibility, userHandler.RegisterUser)
 		userApi.GET("/:id", userHandler.GetUserDataById)
 		userApi.POST("/login", userHandler.Login)
 		userApi.POST("/checkemail", userHandler.CheckEmailAvailibility)

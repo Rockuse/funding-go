@@ -18,6 +18,22 @@ type CampaignFormat struct {
 	CreatedBy      string    `json:"create_dby"`
 }
 
+type CampaignDetailFormat struct {
+	Detail CampaignFormat
+	User   CampaignUser
+	Perk   []string
+	Images []CampaignImages
+}
+
+type CampaignUser struct {
+	Name     string
+	ImageUrl string
+}
+type CampaignImages struct {
+	ImageUrl  string
+	IsPrimary bool
+}
+
 func FormatCampaign(data Campaign, host string) CampaignFormat {
 	formater := CampaignFormat{
 		Id:             data.Id,
@@ -46,6 +62,27 @@ func FormatAllCampaigns(data []Campaign, host string) []CampaignFormat {
 	formater := []CampaignFormat{}
 	for _, campaign := range data {
 		formater = append(formater, FormatCampaign(campaign, host))
+	}
+	return formater
+}
+
+func FormatDetail(data Campaign, host string) CampaignDetailFormat {
+	formater := CampaignDetailFormat{
+		Detail: CampaignFormat{
+			Id:             data.Id,
+			UserId:         data.UserId,
+			Name:           data.Name,
+			ShortDesc:      data.ShortDesc,
+			ImageURL:       "",
+			GoalAmmount:    data.GoalAmmount,
+			CurrentAmmount: data.CurrentAmmount,
+			Slug:           data.Slug,
+			CreatedDate:    data.CreatedDate,
+			CreatedBy:      data.CreatedBy,
+		},
+		User:   CampaignUser{},
+		Perk:   []string{},
+		Images: []CampaignImages{},
 	}
 	return formater
 }
