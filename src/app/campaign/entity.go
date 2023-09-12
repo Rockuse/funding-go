@@ -40,5 +40,12 @@ type CampaignInput struct {
 	Name        string `json:"name" binding:"required"`
 	ShortDesc   string `json:"shortdesc" binding:"required"`
 	Description string `json:"description"`
+	GoalAmmount int    `json:"goal_ammount"`
+	Perks       string `json:"perks"`
 	CreatedBy   string
+	User        user.User
+}
+
+type CampaignUri struct {
+	ID int `uri:"id" binding:"required"`
 }

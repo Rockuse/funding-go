@@ -2,6 +2,7 @@ package campaign
 
 import (
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -19,19 +20,19 @@ type CampaignFormat struct {
 }
 
 type CampaignDetailFormat struct {
-	Detail CampaignFormat
-	User   CampaignUser
-	Perk   []string
-	Images []CampaignImages
+	Detail CampaignFormat   `json:"detail"`
+	User   CampaignUser     `json:"user"`
+	Perk   []string         `json:"perk"`
+	Images []CampaignImages `json:"images"`
 }
 
 type CampaignUser struct {
-	Name     string
-	ImageUrl string
+	Name     string `json:"name"`
+	ImageUrl string `json:"image_url"`
 }
 type CampaignImages struct {
-	ImageUrl  string
-	IsPrimary bool
+	ImageUrl  string `json:"image_url"`
+	IsPrimary bool   `json:"is_primary"`
 }
 
 func FormatCampaign(data Campaign, host string) CampaignFormat {
@@ -80,9 +81,23 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 			CreatedDate:    data.CreatedDate,
 			CreatedBy:      data.CreatedBy,
 		},
-		User:   CampaignUser{},
-		Perk:   []string{},
-		Images: []CampaignImages{},
+		// User:   CampaignUser{},
+		// Perk:   []string,
+		// Images: []CampaignImages{},
+
 	}
+	formater.Perk = strings.Split(data.Perks, ",")
+	formater.User.ImageUrl = host + "/images/" + data.User.Avatar_file_name
+	formater.User.Name = data.User.Name
+
+	var images []CampaignImages
+	for _, image := range data.CampaignImages {
+		images = append(images, CampaignImages{
+			ImageUrl:  host + "/images/" + image.FileName,
+			IsPrimary: image.IsPrimary,
+		},
+		)
+	}
+	formater.Images = images
 	return formater
 }

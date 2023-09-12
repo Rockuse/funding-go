@@ -2,14 +2,17 @@ package campaign
 
 import (
 	"errors"
+	"fmt"
 	"time"
+
+	"github.com/gosimple/slug"
 )
 
 type Service interface {
 	SaveCampaign(input CampaignInput) (Campaign, error)
 	FindAll() ([]Campaign, error)
 	FindByUserId(userId int) ([]Campaign, error)
-	GetCampaignById(id int) (Campaign, error)
+	GetCampaignById(id CampaignUri) (Campaign, error)
 }
 
 type service struct {
@@ -31,6 +34,10 @@ func (s *service) SaveCampaign(input CampaignInput) (Campaign, error) {
 	data.Perks = "none"
 	data.CreatedDate = time.Now()
 	data.CreatedBy = input.CreatedBy
+	slugCandidate := fmt.Sprintf("%s %d", input.Name, input.User.Id)
+	data.Slug = slug.Make(slugCandidate)
+	inputUser, _ := 
+	data.User = inputUser
 
 	saved, err := s.repository.Save(data)
 	if err != nil {
@@ -62,8 +69,8 @@ func (s *service) FindByUserId(userId int) ([]Campaign, error) {
 	return campaignData, nil
 }
 
-func (s *service) GetCampaignById(id int) (Campaign, error) {
-	campaignData, err := s.repository.FindById(id)
+func (s *service) GetCampaignById(input CampaignUri) (Campaign, error) {
+	campaignData, err := s.repository.FindById(input.ID)
 	if err != nil {
 		return campaignData, err
 	}

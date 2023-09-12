@@ -108,9 +108,15 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 }
 
 func (h *handler) GetDetail(c *gin.Context) {
-	idParam := c.Param("id")
-	id, err := strconv.Atoi(idParam)
-	campaignData, err := h.campaignService.GetCampaignById(id)
+	var input campaign.CampaignUri
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
+	campaignData, err := h.campaignService.GetCampaignById(input)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
@@ -124,7 +130,7 @@ func (h *handler) GetDetail(c *gin.Context) {
 		return
 	}
 	host := c.Request.URL.Host
-	formated := campaign.FormatCampaign(campaignData, host)
+	formated := campaign.FormatDetail(campaignData, host)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
