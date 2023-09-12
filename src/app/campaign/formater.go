@@ -16,7 +16,7 @@ type CampaignFormat struct {
 	CurrentAmmount int       `json:"current_ammount"`
 	Slug           string    `json:"slug"`
 	CreatedDate    time.Time `json:"created_date"`
-	CreatedBy      string    `json:"create_dby"`
+	CreatedBy      string    `json:"created_by"`
 }
 
 type CampaignDetailFormat struct {
@@ -87,13 +87,13 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 
 	}
 	formater.Perk = strings.Split(data.Perks, ",")
-	formater.User.ImageUrl = host + "/images/" + data.User.Avatar_file_name
+	formater.User.ImageUrl = host + "/images" + data.User.Avatar_file_name
 	formater.User.Name = data.User.Name
 
 	var images []CampaignImages
 	for _, image := range data.CampaignImages {
 		images = append(images, CampaignImages{
-			ImageUrl:  host + "/images/" + image.FileName,
+			ImageUrl:  host + "/images" + image.FileName,
 			IsPrimary: image.IsPrimary,
 		},
 		)

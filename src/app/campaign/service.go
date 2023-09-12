@@ -3,6 +3,7 @@ package campaign
 import (
 	"errors"
 	"fmt"
+	"funding/src/app/user"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -16,11 +17,12 @@ type Service interface {
 }
 
 type service struct {
-	repository Repository
+	repository  Repository
+	userService user.Service
 }
 
-func NewService(repository Repository) *service {
-	return &service{repository}
+func NewService(repository Repository, userService user.Service) *service {
+	return &service{repository, userService}
 }
 
 func (s *service) SaveCampaign(input CampaignInput) (Campaign, error) {
@@ -29,14 +31,15 @@ func (s *service) SaveCampaign(input CampaignInput) (Campaign, error) {
 	data.Name = input.Name
 	data.ShortDesc = input.ShortDesc
 	data.Description = input.Description
-	data.GoalAmmount = 0
+	data.GoalAmmount = input.GoalAmmount
 	data.CurrentAmmount = 0
 	data.Perks = "none"
 	data.CreatedDate = time.Now()
 	data.CreatedBy = input.CreatedBy
+
 	slugCandidate := fmt.Sprintf("%s %d", input.Name, input.User.Id)
 	data.Slug = slug.Make(slugCandidate)
-	inputUser, _ := 
+	inputUser, _ := s.userService.GetUserById(input.UserId)
 	data.User = inputUser
 
 	saved, err := s.repository.Save(data)

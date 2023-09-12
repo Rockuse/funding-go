@@ -1,8 +1,8 @@
 package handler
 
 import (
-	"errors"
 	"funding/src/app/campaign"
+	"funding/src/app/common"
 	"funding/src/app/helper"
 	"funding/src/app/user"
 	"net/http"
@@ -110,23 +110,11 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 func (h *handler) GetDetail(c *gin.Context) {
 	var input campaign.CampaignUri
 	err := c.ShouldBindUri(&input)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if !common.MyContext.ErrorHandler("Error Input", http.StatusBadRequest, err) {
 		return
 	}
 	campaignData, err := h.campaignService.GetCampaignById(input)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Error DB", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-	if campaignData.Id == 0 {
-		errors := gin.H{"errors": errors.New("campaign not found")}
-		response := helper.ResponseHelper("Campaign not found", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if !common.MyContext.ErrorHandler(err.Error(), http.StatusBadRequest, err) {
 		return
 	}
 	host := c.Request.URL.Host

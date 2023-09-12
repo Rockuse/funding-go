@@ -12,11 +12,11 @@ type Response struct {
 
 type Meta struct {
 	Message string `json:"message"`
-	Code    uint16 `json:"code"`
+	Code    int    `json:"code"`
 	Status  string `json:"status"`
 }
 
-func ResponseHelper(message string, code uint16, status string, data interface{}) Response {
+func ResponseHelper(message string, code int, status string, data interface{}) Response {
 	Meta := Meta{
 		Message: message,
 		Code:    code,
