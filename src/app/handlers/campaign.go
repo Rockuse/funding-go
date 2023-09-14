@@ -109,12 +109,13 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 
 func (h *handler) GetDetail(c *gin.Context) {
 	var input campaign.CampaignUri
+	commons := &common.MyContext{Context: c}
 	err := c.ShouldBindUri(&input)
-	if !common.MyContext.ErrorHandler("Error Input", http.StatusBadRequest, err) {
+	if !commons.ErrorHandler("Error Input", http.StatusBadRequest, err) {
 		return
 	}
 	campaignData, err := h.campaignService.GetCampaignById(input)
-	if !common.MyContext.ErrorHandler(err.Error(), http.StatusBadRequest, err) {
+	if !commons.ErrorHandler(err.Error(), http.StatusBadRequest, err) {
 		return
 	}
 	host := c.Request.URL.Host
