@@ -14,6 +14,7 @@ type Service interface {
 	FindAll() ([]Campaign, error)
 	FindByUserId(userId int) ([]Campaign, error)
 	GetCampaignById(id CampaignUri) (Campaign, error)
+	UpdateCampaign(input CampaignInput) (Campaign, error)
 }
 
 type service struct {
@@ -33,12 +34,32 @@ func (s *service) SaveCampaign(input CampaignInput) (Campaign, error) {
 	data.Description = input.Description
 	data.GoalAmmount = input.GoalAmmount
 	data.CurrentAmmount = 0
-	data.Perks = "none"
+	data.Perks = input.Perks
 	data.CreatedDate = time.Now()
 	data.CreatedBy = input.CreatedBy
 
 	slugCandidate := fmt.Sprintf("%s %d", input.Name, input.User.Id)
 	data.Slug = slug.Make(slugCandidate)
+	inputUser, _ := s.userService.GetUserById(input.UserId)
+	data.User = inputUser
+
+	saved, err := s.repository.Save(data)
+	if err != nil {
+		return saved, err
+	}
+	return saved, nil
+}
+
+func (s *service) UpdateCampaign(input CampaignInput) (Campaign, error) {
+	var data Campaign
+	data.Name = input.Name
+	data.ShortDesc = input.ShortDesc
+	data.Description = input.Description
+	data.GoalAmmount = input.GoalAmmount
+	data.Perks = input.Perks
+	data.ModifiedDate = time.Now()
+	data.ModifiedBy = input.CreatedBy
+
 	inputUser, _ := s.userService.GetUserById(input.UserId)
 	data.User = inputUser
 
