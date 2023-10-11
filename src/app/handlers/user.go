@@ -1,11 +1,12 @@
 package handler
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
 	"funding/src/app/auth"
 	"funding/src/app/helper"
 	"funding/src/app/user"
+	"io"
 	"net/http"
 	"strconv"
 
@@ -24,12 +25,8 @@ func NewUserHandler(userService user.Service) *userHandler {
 func (h *userHandler) RegisterUser(c *gin.Context) {
 	var input user.RegisterInput
 	err := c.ShouldBindJSON(&input)
-	fmt.Println(input, 123)
-
-	err2 := json.NewDecoder(c.Request.Body).Decode(&input)
-	fmt.Println(err2)
-	return
-	if err != nil && err.Error() != "EOF" {
+	fmt.Println(err)
+	if err != nil {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", errors)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -89,8 +86,11 @@ func (h *userHandler) Login(c *gin.Context) {
 }
 
 func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
+	ByteBody, _ := io.ReadAll(c.Request.Body)
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 	var email user.EmailInput
 	err := c.ShouldBindJSON(&email)
+	fmt.Println(err, 111)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("format Email salah", http.StatusUnprocessableEntity, "fail", errors)
@@ -110,16 +110,9 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	// data := gin.H{"is_available": isValid}
-	// response := helper.ResponseHelper("Email tersedia", http.StatusOK, "success", data)
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 	c.Set("email_isAvailable", isValid)
-	//user input email
-	//input email ditangkap handler
-	//input email mapping ke struct
-	//validasi data binding email
-	//panggil service check email
-	//service panggil repo find email
-	//apabila ada return error, apabila tidak ada sukses
+	c.Next()
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {
