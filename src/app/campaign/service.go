@@ -52,6 +52,8 @@ func (s *service) SaveCampaign(input CampaignInput) (Campaign, error) {
 
 func (s *service) UpdateCampaign(input CampaignInput) (Campaign, error) {
 	var data Campaign
+	data.Id = input.Id
+	data.UserId = input.UserId
 	data.Name = input.Name
 	data.ShortDesc = input.ShortDesc
 	data.Description = input.Description
@@ -62,8 +64,8 @@ func (s *service) UpdateCampaign(input CampaignInput) (Campaign, error) {
 
 	inputUser, _ := s.userService.GetUserById(input.UserId)
 	data.User = inputUser
-
-	saved, err := s.repository.Save(data)
+	fmt.Println(data)
+	saved, err := s.repository.Update(data)
 	if err != nil {
 		return saved, err
 	}

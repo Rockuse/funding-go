@@ -101,3 +101,13 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 	formater.Images = images
 	return formater
 }
+
+func (p CampaignInput) ToMap() map[string]interface{} {
+	return map[string]interface{}{
+		"name":         p.Name,
+		"shortdesc":    p.ShortDesc,
+		"description":  p.Description,
+		"goal_ammount": p.GoalAmmount,
+		"perks":        p.Perks,
+	}
+}

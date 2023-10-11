@@ -1,6 +1,8 @@
 package handler
 
 import (
+	"encoding/json"
+	"fmt"
 	"funding/src/app/auth"
 	"funding/src/app/helper"
 	"funding/src/app/user"
@@ -22,7 +24,12 @@ func NewUserHandler(userService user.Service) *userHandler {
 func (h *userHandler) RegisterUser(c *gin.Context) {
 	var input user.RegisterInput
 	err := c.ShouldBindJSON(&input)
-	if err != nil {
+	fmt.Println(input, 123)
+
+	err2 := json.NewDecoder(c.Request.Body).Decode(&input)
+	fmt.Println(err2)
+	return
+	if err != nil && err.Error() != "EOF" {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", errors)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -49,7 +56,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 func (h *userHandler) Login(c *gin.Context) {
 	var input user.LoginInput
-	err := c.ShouldBind(&input)
+	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("Login gagal", http.StatusUnprocessableEntity, "fail", errors)

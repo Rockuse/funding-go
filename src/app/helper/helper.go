@@ -31,14 +31,20 @@ func ResponseHelper(message string, code int, status string, data interface{}) R
 
 func FormatValidationError(err error) gin.H {
 	var errors []string
-	for _, e := range err.(validator.ValidationErrors) {
-		errors = append(errors, e.Error())
+	if err != nil {
+		for _, e := range err.(validator.ValidationErrors) {
+			errors = append(errors, e.Error())
+		}
 	}
 	errorMessage := gin.H{"errors": errors}
 
 	return errorMessage
 }
 
+func Error(err error) gin.H {
+
+	return gin.H{"errors": err}
+}
 func PathUpload(dst ...string) (string, string) {
 	path := "public/images"
 	file := ""

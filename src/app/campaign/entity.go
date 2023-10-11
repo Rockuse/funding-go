@@ -35,7 +35,8 @@ type CampaignImage struct {
 	ModifiedBy   string
 }
 
-type CampaignInput struct {
+type 	CampaignInput struct {
+	Id          int
 	UserId      int    `json:"userid"`
 	Name        string `json:"name" binding:"required"`
 	ShortDesc   string `json:"shortdesc" binding:"required"`

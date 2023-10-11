@@ -24,7 +24,7 @@ func (h *handler) GetListCampaign(c *gin.Context) {
 	host := c.Request.URL.Host
 	campaignArr, err := h.campaignService.FindAll()
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, err) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 
@@ -42,12 +42,12 @@ func (h *handler) GetListCampaignById(c *gin.Context) {
 	id := c.Param("id")
 	userId, err := strconv.Atoi(id)
 
-	if commons.ErrorHandler("Error Param", http.StatusBadRequest, err) {
+	if commons.ErrorHandler("Error Param", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 	campaignArr, err := h.campaignService.FindByUserId(userId)
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, err) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 	formated := campaign.FormatAllCampaigns(campaignArr, host)
@@ -64,12 +64,12 @@ func (h *handler) SaveCampaign(c *gin.Context) {
 	input.UserId = currentUser.Id
 	input.CreatedBy = strconv.Itoa(currentUser.Id)
 
-	if commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
+	if err != nil && commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}
 	data, err := h.campaignService.SaveCampaign(input)
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, err) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 
@@ -82,16 +82,23 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	var input campaign.CampaignInput
+
 	err := c.ShouldBindJSON(&input)
+	if err != nil && commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
+		return
+	}
+
 	input.UserId = currentUser.Id
 	input.CreatedBy = strconv.Itoa(currentUser.Id)
-
-	if commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
+	id := c.Param("id")
+	intId, err := strconv.Atoi(id)
+	input.Id = intId
+	if err != nil && commons.ErrorHandler("Convert Error", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 
 	data, err := h.campaignService.UpdateCampaign(input)
-	if commons.ErrorHandler("Error Input", http.StatusBadRequest, err) {
+	if commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 
@@ -103,13 +110,9 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 func (h *handler) GetDetail(c *gin.Context) {
 	var input campaign.CampaignUri
 	commons := &common.MyContext{Context: c}
-	err := c.ShouldBindUri(&input)
 
-	if commons.ErrorHandler("Error Input", http.StatusBadRequest, err) {
-		return
-	}
 	campaignData, err := h.campaignService.GetCampaignById(input)
-	if commons.ErrorHandler(err.Error(), http.StatusBadRequest, err) {
+	if commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 	host := c.Request.URL.Host
