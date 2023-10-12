@@ -1,6 +1,8 @@
 package campaign
 
 import (
+	"errors"
+
 	"gorm.io/gorm"
 )
 
@@ -10,6 +12,7 @@ type Repository interface {
 	FindAll() ([]Campaign, error)
 	FindByUserId(userID int) ([]Campaign, error)
 	FindById(ID int) (Campaign, error)
+	CreateImage(campaignImage CampaignImage) (CampaignImage, error)
 }
 
 type repository struct {
@@ -29,9 +32,12 @@ func (r *repository) Save(campaign Campaign) (Campaign, error) {
 }
 
 func (r *repository) Update(campaign Campaign) (Campaign, error) {
-	err := r.db.Model(&campaign).Where("user_id=? and id=?", campaign.UserId, campaign.Id).Updates(campaign).Error //Save(&campaign).Where("user_id=?", campaign.UserId).Error
-	if err != nil {
-		return campaign, err
+	data := r.db.Model(&campaign).Where("user_id=? and id=?", campaign.UserId, campaign.Id).Updates(campaign) //Save(&campaign).Where("user_id=?", campaign.UserId).Error
+	if data.Error != nil {
+		return campaign, data.Error
+	}
+	if data.RowsAffected == 0 {
+		return campaign, errors.New("no update")
 	}
 	return campaign, nil
 }
@@ -60,4 +66,24 @@ func (r *repository) FindById(ID int) (Campaign, error) {
 		return campaignData, err
 	}
 	return campaignData, nil
+}
+
+func (r *repository) CreateImage(campaignImage CampaignImage) (CampaignImage, error) {
+	err := r.db.Create(&campaignImage).Error
+	if err != nil {
+		return campaignImage, err
+	}
+
+	return campaignImage, nil
+}
+
+func (r *repository) UpdatePrimary(campaignId int) (bool, error) {
+	data := r.db.Model(&CampaignImage{}).Update("is_primary", false).Where("campaign_id", campaignId)
+
+	if data.Error != nil {
+		return false, data.Error
+	} else if data.RowsAffected == 0 {
+		return false, errors.New("data not found")
+	}
+	return true, nil
 }

@@ -16,7 +16,7 @@ func (c *MyContext) ErrorHandler(text string, status int, err gin.H) bool {
 	fmt.Println(errors)
 	if errors != nil {
 		response := helper.ResponseHelper(text, status, "fail", errors)
-		c.Context.JSON(status, response)
+		c.Context.AbortWithStatusJSON(status, response)
 		return true
 	}
 	return false

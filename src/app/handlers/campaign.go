@@ -98,9 +98,10 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 	}
 
 	data, err := h.campaignService.UpdateCampaign(input)
-	if commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
+	
 
 	formated := campaign.FormatCampaign(data, host)
 	response := helper.ResponseHelper("Campaign Saved", http.StatusOK, "success", formated)

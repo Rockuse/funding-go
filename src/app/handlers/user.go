@@ -23,32 +23,62 @@ func NewUserHandler(userService user.Service) *userHandler {
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
+	check := c.MustGet("email_isAvailable")
 	var input user.RegisterInput
 	err := c.ShouldBindJSON(&input)
-	fmt.Println(err)
+	fmt.Println(check)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", errors)
-		c.JSON(http.StatusUnprocessableEntity, response)
+		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, response)
 		return
 	}
 	newUser, err := h.userService.RegisterUser(input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 	token, err := h.authService.GenerateToken(newUser.Id)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
-		c.JSON(http.StatusBadRequest, response)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
 	formater := user.FormatUser(newUser, token)
 	response := helper.ResponseHelper("Data berhasil disimpan", http.StatusOK, "success", formater)
 	c.JSON(http.StatusOK, response)
+}
+
+func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
+	ByteBody, _ := io.ReadAll(c.Request.Body)
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
+	var email user.EmailInput
+	err := c.ShouldBindJSON(&email)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		response := helper.ResponseHelper("format Email salah", http.StatusUnprocessableEntity, "fail", errors)
+		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+	isValid, err := h.userService.IsEmailAvailable(email)
+	if err != nil {
+		errors := gin.H{"errors": err}
+		response := helper.ResponseHelper("Email gagal di cek", http.StatusBadRequest, "fail", errors)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+	if !isValid {
+		errors := gin.H{"errors": "Email sudah terdaftar"}
+		response := helper.ResponseHelper("Email sudah terdaftar", http.StatusBadRequest, "fail", errors)
+		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+		return
+	}
+	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
+	c.Set("email_isAvailable", isValid)
+	c.Next()
 }
 
 func (h *userHandler) Login(c *gin.Context) {
@@ -83,36 +113,6 @@ func (h *userHandler) Login(c *gin.Context) {
 	//"input struct login" passing ke user service
 	//service mencari data user menggunakan repository (user,email)
 	//cocokan password
-}
-
-func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
-	ByteBody, _ := io.ReadAll(c.Request.Body)
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
-	var email user.EmailInput
-	err := c.ShouldBindJSON(&email)
-	fmt.Println(err, 111)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		response := helper.ResponseHelper("format Email salah", http.StatusUnprocessableEntity, "fail", errors)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-	isValid, err := h.userService.IsEmailAvailable(email)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Email gagal di cek", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-	if !isValid {
-		errors := gin.H{"errors": "Email sudah terdaftar"}
-		response := helper.ResponseHelper("Email sudah terdaftar", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
-		return
-	}
-	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
-	c.Set("email_isAvailable", isValid)
-	c.Next()
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {

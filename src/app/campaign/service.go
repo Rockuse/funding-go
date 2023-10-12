@@ -15,6 +15,7 @@ type Service interface {
 	FindByUserId(userId int) ([]Campaign, error)
 	GetCampaignById(id CampaignUri) (Campaign, error)
 	UpdateCampaign(input CampaignInput) (Campaign, error)
+	UploadCampaignImage(images []CampaignImage) (bool, error)
 }
 
 type service struct {
@@ -104,4 +105,8 @@ func (s *service) GetCampaignById(input CampaignUri) (Campaign, error) {
 		return campaignData, errors.New("campaign not found")
 	}
 	return campaignData, nil
+}
+
+func (s *service) UploadCampaignImage(images []CampaignImage) (bool, error) {
+	return true, errors.New("error")
 }

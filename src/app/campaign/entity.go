@@ -26,16 +26,16 @@ type Campaign struct {
 
 type CampaignImage struct {
 	Id           int
-	CampaignId   int
-	FileName     string
-	IsPrimary    bool
+	CampaignId   int    `json:"campaign_id" binding:"required"`
+	FileName     string `json:"file_name" binding:"required"`
+	IsPrimary    bool   `json:"is_primary" binding:"required"`
 	ModifiedDate time.Time
 	CreatedDate  time.Time
 	CreatedBy    string
 	ModifiedBy   string
 }
 
-type 	CampaignInput struct {
+type CampaignInput struct {
 	Id          int
 	UserId      int    `json:"userid"`
 	Name        string `json:"name" binding:"required"`

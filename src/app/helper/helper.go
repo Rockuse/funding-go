@@ -43,7 +43,7 @@ func FormatValidationError(err error) gin.H {
 
 func Error(err error) gin.H {
 
-	return gin.H{"errors": err}
+	return gin.H{"errors": err.Error()}
 }
 func PathUpload(dst ...string) (string, string) {
 	path := "public/images"
