@@ -1,6 +1,7 @@
-package campaign
+package handler
 
 import (
+	"funding/src/app/campaign"
 	"funding/src/app/common"
 	"funding/src/app/helper"
 	"funding/src/app/user"
@@ -10,15 +11,15 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type handlers struct {
-	campaignService Service
+type handler struct {
+	campaignService campaign.Service
 }
 
-func NewCampaignHandler(campaignService Service) *handlers {
-	return &handlers{campaignService}
+func NewCampaignHandler(campaignService campaign.Service) *handler {
+	return &handler{campaignService}
 }
 
-func (h *handlers) GetListCampaign(c *gin.Context) {
+func (h *handler) GetListCampaign(c *gin.Context) {
 	commons := &common.MyContext{Context: c}
 	host := c.Request.URL.Host
 	campaignArr, err := h.campaignService.FindAll()
@@ -27,15 +28,15 @@ func (h *handlers) GetListCampaign(c *gin.Context) {
 		return
 	}
 
-	formated := FormatAllCampaigns(campaignArr, host)
+	formated := campaign.FormatAllCampaigns(campaignArr, host)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *handlers) GetListCampaignById(c *gin.Context) {
+func (h *handler) GetListCampaignById(c *gin.Context) {
 	commons := &common.MyContext{Context: c}
 	host := c.Request.URL.Host
-	// var list []CampaignFormat
+	// var list []campaign.CampaignFormat
 	// currentUser := c.MustGet("currentUser").(user.User)
 	// userId := currentUser.Id
 	id := c.Param("id")
@@ -49,16 +50,16 @@ func (h *handlers) GetListCampaignById(c *gin.Context) {
 	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
-	formated := FormatAllCampaigns(campaignArr, host)
+	formated := campaign.FormatAllCampaigns(campaignArr, host)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *handlers) SaveCampaign(c *gin.Context) {
+func (h *handler) SaveCampaign(c *gin.Context) {
 	commons := &common.MyContext{Context: c}
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
-	var input CampaignInput
+	var input campaign.CampaignInput
 	err := c.ShouldBindJSON(&input)
 	input.UserId = currentUser.Id
 	input.CreatedBy = strconv.Itoa(currentUser.Id)
@@ -72,15 +73,15 @@ func (h *handlers) SaveCampaign(c *gin.Context) {
 		return
 	}
 
-	formated := FormatCampaign(data, host)
+	formated := campaign.FormatCampaign(data, host)
 	response := helper.ResponseHelper("Campaign Saved", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
-func (h *handlers) UpdateCampaign(c *gin.Context) {
+func (h *handler) UpdateCampaign(c *gin.Context) {
 	commons := &common.MyContext{Context: c}
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
-	var input CampaignInput
+	var input campaign.CampaignInput
 
 	err := c.ShouldBindJSON(&input)
 	if err != nil && commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
@@ -100,14 +101,15 @@ func (h *handlers) UpdateCampaign(c *gin.Context) {
 	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
+	
 
-	formated := FormatCampaign(data, host)
+	formated := campaign.FormatCampaign(data, host)
 	response := helper.ResponseHelper("Campaign Saved", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *handlers) GetDetail(c *gin.Context) {
-	var input CampaignUri
+func (h *handler) GetDetail(c *gin.Context) {
+	var input campaign.CampaignUri
 	commons := &common.MyContext{Context: c}
 
 	campaignData, err := h.campaignService.GetCampaignById(input)
@@ -115,7 +117,7 @@ func (h *handlers) GetDetail(c *gin.Context) {
 		return
 	}
 	host := c.Request.URL.Host
-	formated := FormatDetail(campaignData, host)
+	formated := campaign.FormatDetail(campaignData, host)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }

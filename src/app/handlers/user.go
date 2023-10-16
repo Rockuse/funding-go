@@ -1,10 +1,11 @@
-package user
+package handler
 
 import (
 	"bytes"
 	"fmt"
 	"funding/src/app/auth"
 	"funding/src/app/helper"
+	"funding/src/app/user"
 	"io"
 	"net/http"
 	"strconv"
@@ -13,17 +14,17 @@ import (
 )
 
 type userHandler struct {
-	userService Service
+	userService user.Service
 	authService auth.Service
 }
 
-func NewUserHandler(userService Service) *userHandler {
+func NewUserHandler(userService user.Service) *userHandler {
 	return &userHandler{userService, auth.NewService()}
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
 	check := c.MustGet("email_isAvailable")
-	var input RegisterInput
+	var input user.RegisterInput
 	err := c.ShouldBindJSON(&input)
 	fmt.Println(check)
 	if err != nil {
@@ -46,7 +47,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-	formater := FormatUser(newUser, token)
+	formater := user.FormatUser(newUser, token)
 	response := helper.ResponseHelper("Data berhasil disimpan", http.StatusOK, "success", formater)
 	c.JSON(http.StatusOK, response)
 }
@@ -54,7 +55,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 	ByteBody, _ := io.ReadAll(c.Request.Body)
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
-	var email EmailInput
+	var email user.EmailInput
 	err := c.ShouldBindJSON(&email)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -81,7 +82,7 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 }
 
 func (h *userHandler) Login(c *gin.Context) {
-	var input LoginInput
+	var input user.LoginInput
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -103,7 +104,7 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formatter := FormatUser(userLogin, token)
+	formatter := user.FormatUser(userLogin, token)
 	response := helper.ResponseHelper("Berhasil Login", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 	//User input
@@ -123,7 +124,7 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 		return
 	}
 	//dapat dari JWT
-	currentUser := c.MustGet("currentUser").(User)
+	currentUser := c.MustGet("currentUser").(user.User)
 	userID := currentUser.Id
 	pathUpload, pathName := helper.PathUpload("user", strconv.Itoa(userID), file.Filename)
 	err = c.SaveUploadedFile(file, pathUpload)
@@ -166,7 +167,7 @@ func (h *userHandler) GetUserDataById(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formater := FormatUser(userData, "tes")
+	formater := user.FormatUser(userData, "tes")
 	response := helper.ResponseHelper("Get User", http.StatusOK, "success", formater)
 	c.JSON(http.StatusOK, response)
 }

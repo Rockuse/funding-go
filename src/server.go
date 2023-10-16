@@ -22,8 +22,8 @@ func NewServer(dbConnection *gorm.DB) *Server {
 
 func (s *Server) ConfigureRoutes() {
 	var module = []routes.Module{
-		// routes.UserModule,
-		// routes.CampaignModule,
+		routes.UserModule,
+		routes.CampaignModule,
 	}
 	router := s.engine
 	router.Static("/images", "./public/images")
