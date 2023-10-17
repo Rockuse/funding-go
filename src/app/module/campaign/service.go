@@ -3,7 +3,7 @@ package campaign
 import (
 	"errors"
 	"fmt"
-	"funding/src/app/user"
+	"funding/src/app/module/user"
 	"time"
 
 	"github.com/gosimple/slug"

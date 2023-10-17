@@ -3,7 +3,7 @@ package middleware
 import (
 	"funding/src/app/auth"
 	"funding/src/app/helper"
-	"funding/src/app/user"
+	"funding/src/app/module/user"
 	"net/http"
 	"strings"
 

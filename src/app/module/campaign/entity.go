@@ -1,7 +1,7 @@
 package campaign
 
 import (
-	"funding/src/app/user"
+	"funding/src/app/module/user"
 	"time"
 )
 

@@ -1,8 +1,7 @@
 package routes
 
 import (
-	handler "funding/src/app/handlers"
-	"funding/src/app/user"
+	"funding/src/app/module/user"
 	"funding/src/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -15,7 +14,7 @@ var UserModule = Module{
 		midService := middleware.NewService(db)
 		userRepository := user.NewRepository(db)
 		userService := user.NewService(userRepository)
-		userHandler := handler.NewUserHandler(userService)
+		userHandler := user.NewUserHandler(userService)
 
 		userApi := api.Group("/user")
 		userApi.POST("", userHandler.CheckEmailAvailibility, userHandler.RegisterUser)

@@ -1,9 +1,8 @@
 package routes
 
 import (
-	"funding/src/app/campaign"
-	handler "funding/src/app/handlers"
-	"funding/src/app/user"
+	"funding/src/app/module/campaign"
+	"funding/src/app/module/user"
 	"funding/src/middleware"
 
 	"github.com/gin-gonic/gin"
@@ -18,7 +17,7 @@ var CampaignModule = Module{
 		userService := user.NewService(userRepository)
 		campaignRepository := campaign.NewRepository(db)
 		campaignService := campaign.NewService(campaignRepository, userService)
-		campaignHandler := handler.NewCampaignHandler(campaignService)
+		campaignHandler := campaign.NewCampaignHandler(campaignService)
 
 		campaignApi := api.Group("/campaign")
 		campaignApi.GET("/", campaignHandler.GetListCampaign)                                     // Get All Campaign
