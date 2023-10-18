@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"funding/src/app/module/user"
+	"strconv"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -15,7 +16,7 @@ type Service interface {
 	FindByUserId(userId int) ([]Campaign, error)
 	GetCampaignById(id CampaignUri) (Campaign, error)
 	UpdateCampaign(input CampaignInput) (Campaign, error)
-	UploadCampaignImage(images []CampaignImage) (bool, error)
+	UploadCampaignImage(images ImageInput, fileDir string) (CampaignImage, error)
 }
 
 type service struct {
@@ -107,6 +108,24 @@ func (s *service) GetCampaignById(input CampaignUri) (Campaign, error) {
 	return campaignData, nil
 }
 
-func (s *service) UploadCampaignImage(images []CampaignImage) (bool, error) {
-	return true, errors.New("error")
+func (s *service) UploadCampaignImage(input ImageInput, filePath string) (CampaignImage, error) {
+	if input.IsPrimary {
+		_, err := s.repository.MarkImagesNonPrimary(input.CampaignId)
+		if err != nil {
+			return CampaignImage{}, err
+		}
+	}
+
+	newImage := CampaignImage{}
+	newImage.CampaignId = input.CampaignId
+	newImage.FileName = filePath
+	newImage.IsPrimary = input.IsPrimary
+	newImage.CreatedDate = time.Now()
+	newImage.CreatedBy = strconv.Itoa(input.UserId)
+
+	result, err := s.repository.CreateImage(newImage)
+	if err != nil {
+		return result, err
+	}
+	return result, nil
 }

@@ -1,6 +1,7 @@
 package campaign
 
 import (
+	"fmt"
 	"funding/src/app/common"
 	"funding/src/app/helper"
 	"funding/src/app/module/user"
@@ -117,5 +118,35 @@ func (h *handler) GetDetail(c *gin.Context) {
 	host := c.Request.URL.Host
 	formated := FormatDetail(campaignData, host)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
+	c.JSON(http.StatusOK, response)
+}
+
+func (h *handler) SaveImages(c *gin.Context) {
+
+	var input ImageInput
+	commons := &common.MyContext{Context: c}
+	// host := c.Request.URL.Host
+	currentUser := c.MustGet("currentUser").(user.User)
+	input.UserId = currentUser.Id
+
+	file, err := c.FormFile("image")
+	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
+		return
+	}
+	err = c.ShouldBind(&input)
+	fmt.Println(input, "testing")
+	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
+		return
+	}
+	pathUpload, fileName := helper.PathUpload("campaign", strconv.Itoa(currentUser.Id), strconv.Itoa(input.CampaignId), file.Filename)
+	campaignImage, err := h.campaignService.UploadCampaignImage(input, fileName)
+	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
+		return
+	}
+	err = c.SaveUploadedFile(file, pathUpload)
+	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
+		return
+	}
+	response := helper.ResponseHelper("Campaign Image successfully Uploaded", http.StatusOK, "success", campaignImage)
 	c.JSON(http.StatusOK, response)
 }

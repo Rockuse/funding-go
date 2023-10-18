@@ -25,6 +25,6 @@ var CampaignModule = Module{
 		campaignApi.GET("/detail/:id", midService.AuthMiddleware(), campaignHandler.GetDetail)    // Get Campaign Detail by ID
 		campaignApi.POST("/", midService.AuthMiddleware(), campaignHandler.SaveCampaign)          // Add Campaign
 		campaignApi.PUT("/:id", midService.AuthMiddleware(), campaignHandler.UpdateCampaign)      // Edit Campaign
-		campaignApi.POST("/images", midService.AuthMiddleware(), campaignHandler.SaveCampaign)    // Upload Image
+		campaignApi.POST("/image", midService.AuthMiddleware(), campaignHandler.SaveImages)       // Upload Image
 	},
 }

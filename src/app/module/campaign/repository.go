@@ -13,6 +13,7 @@ type Repository interface {
 	FindByUserId(userID int) ([]Campaign, error)
 	FindById(ID int) (Campaign, error)
 	CreateImage(campaignImage CampaignImage) (CampaignImage, error)
+	MarkImagesNonPrimary(campaignId int) (bool, error)
 }
 
 type repository struct {
@@ -84,6 +85,14 @@ func (r *repository) UpdatePrimary(campaignId int) (bool, error) {
 		return false, data.Error
 	} else if data.RowsAffected == 0 {
 		return false, errors.New("data not found")
+	}
+	return true, nil
+}
+
+func (r *repository) MarkImagesNonPrimary(id int) (bool, error) {
+	data := r.db.Model(&CampaignImage{}).Where("campaign_id", id).Update("is_primary", false)
+	if data.Error != nil {
+		return false, data.Error
 	}
 	return true, nil
 }

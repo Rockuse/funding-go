@@ -1,6 +1,11 @@
 package helper
 
 import (
+	"fmt"
+	"funding/src/config"
+	"strconv"
+	"strings"
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 )
@@ -43,14 +48,22 @@ func FormatValidationError(err error) gin.H {
 
 func Error(err error) gin.H {
 
-	return gin.H{"errors": err.Error()}
+	return gin.H{"errors": err}
 }
 func PathUpload(dst ...string) (string, string) {
+	fmt.Println(len(dst))
 	path := "public/images"
 	file := ""
-	for _, str := range dst {
-
+	for idx, str := range dst {
 		if str == "" {
+			continue
+		}
+		if idx == len(dst) {
+			lastIndex := strings.Split(str, ".")
+			idFile := config.Uuid()
+			rename := strconv.Itoa(idFile) + "." + lastIndex[len(lastIndex)-1]
+			path += "/" + str
+			file += "/" + rename
 			continue
 		}
 		path += "/" + str
