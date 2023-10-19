@@ -125,8 +125,8 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	//dapat dari JWT
 	currentUser := c.MustGet("currentUser").(User)
 	userID := currentUser.Id
-	pathUpload, pathName := helper.PathUpload("user", strconv.Itoa(userID), file.Filename)
-	err = c.SaveUploadedFile(file, pathUpload)
+	newPath, pathName := helper.PathUpload("user", strconv.Itoa(userID), file.Filename)
+	err = c.SaveUploadedFile(file, newPath)
 	if err != nil {
 		errors := gin.H{"is_uploaded": false}
 		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)

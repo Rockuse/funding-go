@@ -3,6 +3,7 @@ package helper
 import (
 	"fmt"
 	"funding/src/config"
+	"mime/multipart"
 	"strconv"
 	"strings"
 
@@ -10,6 +11,9 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type Helper interface {
+	UploadFile(file *multipart.FileHeader, oldPath string, newPath string) error
+}
 type Response struct {
 	Meta Meta        `json:"meta"`
 	Data interface{} `json:"data"`
@@ -47,27 +51,29 @@ func FormatValidationError(err error) gin.H {
 }
 
 func Error(err error) gin.H {
-
+	if err != nil {
+		return gin.H{"errors": err.Error()}
+	}
 	return gin.H{"errors": err}
 }
+
 func PathUpload(dst ...string) (string, string) {
-	fmt.Println(len(dst))
-	path := "public/images"
-	file := ""
+	rename := strconv.Itoa(config.Uuid())
+	newPath := "public/images"
+	fileName := ""
 	for idx, str := range dst {
 		if str == "" {
 			continue
 		}
-		if idx == len(dst) {
-			lastIndex := strings.Split(str, ".")
-			idFile := config.Uuid()
-			rename := strconv.Itoa(idFile) + "." + lastIndex[len(lastIndex)-1]
-			path += "/" + str
-			file += "/" + rename
+		if len(dst)-1 == idx {
+			ext := strings.Split(str, ".")
+			fmt.Println(ext[len(ext)-1])
+			newPath += "/" + rename + "." + ext[len(ext)-1]
+			fileName += "/" + rename + "." + ext[len(ext)-1]
 			continue
 		}
-		path += "/" + str
-		file += "/" + str
+		newPath += "/" + str
+		fileName += "/" + str
 	}
-	return path, file
+	return newPath, fileName
 }

@@ -130,7 +130,7 @@ func (h *handler) SaveImages(c *gin.Context) {
 	input.UserId = currentUser.Id
 
 	file, err := c.FormFile("image")
-	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
+	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 	err = c.ShouldBind(&input)
@@ -138,12 +138,12 @@ func (h *handler) SaveImages(c *gin.Context) {
 	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}
-	pathUpload, fileName := helper.PathUpload("campaign", strconv.Itoa(currentUser.Id), strconv.Itoa(input.CampaignId), file.Filename)
+	newPath, fileName := helper.PathUpload("campaign", strconv.Itoa(currentUser.Id), strconv.Itoa(input.CampaignId), file.Filename)
 	campaignImage, err := h.campaignService.UploadCampaignImage(input, fileName)
 	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
-	err = c.SaveUploadedFile(file, pathUpload)
+	err = c.SaveUploadedFile(file, newPath)
 	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}
