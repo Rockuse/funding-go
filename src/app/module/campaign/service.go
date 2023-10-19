@@ -66,7 +66,6 @@ func (s *service) UpdateCampaign(input CampaignInput) (Campaign, error) {
 
 	inputUser, _ := s.userService.GetUserById(input.UserId)
 	data.User = inputUser
-	fmt.Println(data)
 	saved, err := s.repository.Update(data)
 	if err != nil {
 		return saved, err

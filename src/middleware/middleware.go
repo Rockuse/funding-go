@@ -38,13 +38,13 @@ func (a *authMiddleware) AuthMiddleware() gin.HandlerFunc {
 		}
 		token, err := authService.ValidateToken(tokenString)
 		if err != nil {
-			response := helper.ResponseHelper("Unauthorized 1", http.StatusUnauthorized, "fail", err)
+			response := helper.ResponseHelper("Unauthorized ", http.StatusUnauthorized, "fail", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}
 		claim, ok := token.Claims.(jwt.MapClaims)
 		if !ok || !token.Valid {
-			response := helper.ResponseHelper("Unauthorized 2", http.StatusUnauthorized, "fail", err)
+			response := helper.ResponseHelper("Unauthorized ", http.StatusUnauthorized, "fail", err)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
 		}

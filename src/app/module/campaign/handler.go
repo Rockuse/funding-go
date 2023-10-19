@@ -1,7 +1,6 @@
 package campaign
 
 import (
-	"fmt"
 	"funding/src/app/common"
 	"funding/src/app/helper"
 	"funding/src/app/module/user"
@@ -110,9 +109,12 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 func (h *handler) GetDetail(c *gin.Context) {
 	var input CampaignUri
 	commons := &common.MyContext{Context: c}
-
+	err := c.ShouldBindUri(&input)
+	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
+		return
+	}
 	campaignData, err := h.campaignService.GetCampaignById(input)
-	if commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
+	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
 	host := c.Request.URL.Host
@@ -134,7 +136,6 @@ func (h *handler) SaveImages(c *gin.Context) {
 		return
 	}
 	err = c.ShouldBind(&input)
-	fmt.Println(input, "testing")
 	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}
@@ -143,10 +144,11 @@ func (h *handler) SaveImages(c *gin.Context) {
 	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
+	data := FormatImage(campaignImage)
 	err = c.SaveUploadedFile(file, newPath)
 	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}
-	response := helper.ResponseHelper("Campaign Image successfully Uploaded", http.StatusOK, "success", campaignImage)
+	response := helper.ResponseHelper("Campaign Image successfully Uploaded", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }

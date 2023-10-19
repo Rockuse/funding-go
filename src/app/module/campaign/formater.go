@@ -102,6 +102,14 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 	return formater
 }
 
+func FormatImage(data CampaignImage) CampaignImages {
+	var campaignImage = CampaignImages{
+		ImageUrl:  "/images/" + data.FileName,
+		IsPrimary: data.IsPrimary,
+	}
+
+	return campaignImage
+}
 func (p CampaignInput) ToMap() map[string]interface{} {
 	return map[string]interface{}{
 		"name":         p.Name,
