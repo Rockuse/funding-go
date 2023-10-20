@@ -46,13 +46,6 @@ func FormatValidationError(err error) gin.H {
 	return errorMessage
 }
 
-func Error(err error) gin.H {
-	if err != nil {
-		return gin.H{"errors": err.Error()}
-	}
-	return gin.H{"errors": err}
-}
-
 func PathUpload(dst ...string) (string, string) {
 	rename := strconv.Itoa(util.Uuid())
 	newPath := "public/images"
