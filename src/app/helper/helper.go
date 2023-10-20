@@ -2,8 +2,7 @@ package helper
 
 import (
 	"fmt"
-	"funding/src/config"
-	"mime/multipart"
+	util "funding/src/app/common/utilities"
 	"strconv"
 	"strings"
 
@@ -11,9 +10,6 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
-type Helper interface {
-	UploadFile(file *multipart.FileHeader, oldPath string, newPath string) error
-}
 type Response struct {
 	Meta Meta        `json:"meta"`
 	Data interface{} `json:"data"`
@@ -58,7 +54,7 @@ func Error(err error) gin.H {
 }
 
 func PathUpload(dst ...string) (string, string) {
-	rename := strconv.Itoa(config.Uuid())
+	rename := strconv.Itoa(util.Uuid())
 	newPath := "public/images"
 	fileName := ""
 	for idx, str := range dst {

@@ -19,11 +19,11 @@ func NewCampaignHandler(campaignService Service) *handler {
 }
 
 func (h *handler) GetListCampaign(c *gin.Context) {
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	host := c.Request.URL.Host
 	campaignArr, err := h.campaignService.FindAll()
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 
@@ -33,7 +33,7 @@ func (h *handler) GetListCampaign(c *gin.Context) {
 }
 
 func (h *handler) GetListCampaignById(c *gin.Context) {
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	host := c.Request.URL.Host
 	// var list []CampaignFormat
 	// currentUser := c.MustGet("currentUser").(user.User)
@@ -41,12 +41,12 @@ func (h *handler) GetListCampaignById(c *gin.Context) {
 	id := c.Param("id")
 	userId, err := strconv.Atoi(id)
 
-	if commons.ErrorHandler("Error Param", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error Param", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	campaignArr, err := h.campaignService.FindByUserId(userId)
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	formated := FormatAllCampaigns(campaignArr, host)
@@ -55,7 +55,7 @@ func (h *handler) GetListCampaignById(c *gin.Context) {
 }
 
 func (h *handler) SaveCampaign(c *gin.Context) {
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	var input CampaignInput
@@ -68,7 +68,7 @@ func (h *handler) SaveCampaign(c *gin.Context) {
 	}
 	data, err := h.campaignService.SaveCampaign(input)
 
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 
@@ -77,7 +77,7 @@ func (h *handler) SaveCampaign(c *gin.Context) {
 	c.JSON(http.StatusOK, response)
 }
 func (h *handler) UpdateCampaign(c *gin.Context) {
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	var input CampaignInput
@@ -92,12 +92,12 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 	id := c.Param("id")
 	intId, err := strconv.Atoi(id)
 	input.Id = intId
-	if err != nil && commons.ErrorHandler("Convert Error", http.StatusBadRequest, helper.Error(err)) {
+	if err != nil && commons.ErrorHandler("Convert Error", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 
 	data, err := h.campaignService.UpdateCampaign(input)
-	if commons.ErrorHandler("Error DB", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 
@@ -108,13 +108,13 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 
 func (h *handler) GetDetail(c *gin.Context) {
 	var input CampaignUri
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	err := c.ShouldBindUri(&input)
-	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
+	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	campaignData, err := h.campaignService.GetCampaignById(input)
-	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, helper.Error(err)) {
+	if err != nil && commons.ErrorHandler(err.Error(), http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	host := c.Request.URL.Host
@@ -126,13 +126,13 @@ func (h *handler) GetDetail(c *gin.Context) {
 func (h *handler) SaveImages(c *gin.Context) {
 
 	var input ImageInput
-	commons := &common.MyContext{Context: c}
+	commons := common.NewCommon(c)
 	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.UserId = currentUser.Id
 
 	file, err := c.FormFile("image")
-	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
+	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	err = c.ShouldBind(&input)
@@ -141,7 +141,7 @@ func (h *handler) SaveImages(c *gin.Context) {
 	}
 	newPath, fileName := helper.PathUpload("campaign", strconv.Itoa(currentUser.Id), strconv.Itoa(input.CampaignId), file.Filename)
 	campaignImage, err := h.campaignService.UploadCampaignImage(input, fileName)
-	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
+	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	data := FormatImage(campaignImage, host)
