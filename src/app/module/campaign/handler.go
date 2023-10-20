@@ -127,7 +127,7 @@ func (h *handler) SaveImages(c *gin.Context) {
 
 	var input ImageInput
 	commons := &common.MyContext{Context: c}
-	// host := c.Request.URL.Host
+	host := c.Request.URL.Host
 	currentUser := c.MustGet("currentUser").(user.User)
 	input.UserId = currentUser.Id
 
@@ -144,7 +144,7 @@ func (h *handler) SaveImages(c *gin.Context) {
 	if commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.Error(err)) {
 		return
 	}
-	data := FormatImage(campaignImage)
+	data := FormatImage(campaignImage, host)
 	err = c.SaveUploadedFile(file, newPath)
 	if err != nil && commons.ErrorHandler("Failed to upload image", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return

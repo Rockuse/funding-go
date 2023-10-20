@@ -3,7 +3,7 @@ package transaction
 import "gorm.io/gorm"
 
 type Repository interface {
-	Add(transaction Transaction) (Transaction, error)
+	Add(transaction Transaction) error
 }
 
 type repository struct {
@@ -14,6 +14,10 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) Add() {
-
+func (r *repository) Add(transaction *Transaction) error {
+	err := r.db.Create(&transaction).Error
+	if err != nil {
+		return err
+	}
+	return nil
 }

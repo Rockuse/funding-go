@@ -102,9 +102,9 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 	return formater
 }
 
-func FormatImage(data CampaignImage) CampaignImages {
+func FormatImage(data CampaignImage, host string) CampaignImages {
 	var campaignImage = CampaignImages{
-		ImageUrl:  "/images/" + data.FileName,
+		ImageUrl:  host + "/images" + data.FileName,
 		IsPrimary: data.IsPrimary,
 	}
 
