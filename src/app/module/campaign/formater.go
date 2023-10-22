@@ -92,11 +92,7 @@ func FormatDetail(data Campaign, host string) CampaignDetailFormat {
 
 	var images []CampaignImages
 	for _, image := range data.CampaignImages {
-		images = append(images, CampaignImages{
-			ImageUrl:  host + "/images" + image.FileName,
-			IsPrimary: image.IsPrimary,
-		},
-		)
+		images = append(images, FormatImage(image, host))
 	}
 	formater.Images = images
 	return formater

@@ -7,6 +7,7 @@ import (
 
 type Service interface {
 	Add(transaction InputTransaction) (Transaction, error)
+	GetById(data InputGetTransaction) (Transaction, []Transaction, error)
 }
 type service struct {
 	repository Repository
@@ -33,4 +34,23 @@ func (s *service) Add(input InputTransaction) (Transaction, error) {
 		return data, err
 	}
 	return data, nil
+}
+
+func (s *service) GetById(input InputGetTransaction) (Transaction, []Transaction, error) {
+	if input.Type == "TRANSACTION" {
+		var transaction Transaction
+		transaction.Id = input.CampaignId
+		transaction.UserId = input.UserId
+		err := s.repository.GetOne(&transaction)
+		if err != nil {
+			return transaction, nil, err
+		}
+	} else if input.Type == "USER" {
+		transaction, err := s.repository.GetByUser(input.UserId)
+		if err != nil {
+			return transaction, transaction, err
+		}
+
+	}
+
 }

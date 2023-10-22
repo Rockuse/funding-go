@@ -33,7 +33,7 @@ func (r *repository) Save(campaign Campaign) (Campaign, error) {
 }
 
 func (r *repository) Update(campaign Campaign) (Campaign, error) {
-	data := r.db.Model(&campaign).Where("user_id=? and id=?", campaign.UserId, campaign.Id).Updates(campaign) //Save(&campaign).Where("user_id=?", campaign.UserId).Error
+	data := r.db.Model(&campaign).Where("user_id=?", campaign.UserId).Updates(campaign) //Save(&campaign).Where("user_id=?", campaign.UserId).Error
 	if data.Error != nil {
 		return campaign, data.Error
 	}

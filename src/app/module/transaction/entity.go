@@ -1,6 +1,9 @@
 package transaction
 
-import "time"
+import (
+	"funding/src/app/module/campaign"
+	"time"
+)
 
 type Transaction struct {
 	Id           int
@@ -13,4 +16,6 @@ type Transaction struct {
 	CreatedDate  time.Time
 	CreatedBy    int
 	ModifiedBy   int
+	Campaign     campaign.Campaign
+	Type         string
 }

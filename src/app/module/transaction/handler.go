@@ -13,7 +13,7 @@ type handler struct {
 	service Service
 }
 
-func (s *handler) NewTransactionHandler(service Service) *handler {
+func NewTransactionHandler(service Service) *handler {
 	return &handler{service}
 }
 
