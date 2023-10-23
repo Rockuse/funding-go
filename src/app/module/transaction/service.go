@@ -8,6 +8,7 @@ import (
 type Service interface {
 	Add(transaction InputTransaction) (Transaction, error)
 	GetById(data int) (Transaction, error)
+	GetByUser(data int) ([]Transaction, error)
 }
 type service struct {
 	repository Repository
@@ -29,7 +30,7 @@ func (s *service) Add(input InputTransaction) (Transaction, error) {
 	data.CreatedDate = time.Now()
 	data.CreatedBy = input.UserId
 	data.ModifiedBy = input.UserId
-	err := s.repository.Add(data)
+	err := s.repository.Add(&data)
 	if err != nil {
 		return data, err
 	}

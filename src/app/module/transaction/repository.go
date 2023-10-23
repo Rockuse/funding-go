@@ -3,7 +3,7 @@ package transaction
 import "gorm.io/gorm"
 
 type Repository interface {
-	Add(transaction Transaction) error
+	Add(transaction *Transaction) error
 	GetOne(data *Transaction) error
 	GetByUser(userId int) ([]Transaction, error)
 }
@@ -25,7 +25,7 @@ func (r *repository) Add(transaction *Transaction) error {
 }
 
 func (r *repository) GetOne(transaction *Transaction) error {
-	err := r.db.Find(&transaction, "id=?", transaction.Id).Error
+	err := r.db.Joins("campaign").Find(&transaction, "id=?", transaction.Id).Error
 	if err != nil {
 		return err
 	}

@@ -53,8 +53,10 @@ func (h *handler) GetListTransaction(c *gin.Context) {
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.Id
 	data, err := h.service.GetById(userId)
+	FormatTransaction(data)
 	if err != nil && commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
+
 	c.JSON(http.StatusOK, data)
 }

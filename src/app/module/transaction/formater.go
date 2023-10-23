@@ -1,14 +1,33 @@
 package transaction
 
 type TransactionFormat struct {
-	Id           int
-	Code         string
-	CampaignId   int
-	UserId       int
-	Amount       int
-	Status       string
+	Id           int    `json:"id"`
+	Code         string `json:"code"`
+	CampaignName string `json:"campaign_name"`
+	UserId       int    `json:"user_id"`
+	Amount       int    `json:"amount"`
+	Status       string `json:"status"`
 }
 
-func Format(data Transaction) TransactionFormat {
-	return TransactionFormat{}
+func FormatTransaction(data Transaction) TransactionFormat {
+	var format TransactionFormat
+	format.Id = data.Id
+	format.Code = data.Code
+	format.CampaignName = data.Campaign.Name
+	format.Amount = data.Amount
+	format.Status = data.Status
+	return format
+}
+
+func FormatListTransaction(data []Transaction) []TransactionFormat {
+	var format []TransactionFormat
+	for index, value := range data {
+		format.Id = data.Id
+		format.Code = data.Code
+		format.CampaignName = data.Campaign.Name
+		format.Amount = data.Amount
+		format.Status = data.Status
+	}
+
+	return format
 }
