@@ -7,10 +7,3 @@ type InputTransaction struct {
 	Amount     int
 	Status     string
 }
-
-type InputGetTransaction struct {
-	UserId     int
-	CampaignId int
-	Type       string
-}
-	
