@@ -52,11 +52,12 @@ func (h *handler) GetListTransaction(c *gin.Context) {
 	commons := common.NewCommon(c)
 	currentUser := c.MustGet("currentUser").(user.User)
 	userId := currentUser.Id
-	data, err := h.service.GetById(userId)
-	FormatTransaction(data)
+	data, err := h.service.GetByUser(userId)
 	if err != nil && commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
+	formated := FormatListTransaction(data)
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 
-	c.JSON(http.StatusOK, data)
+	c.JSON(http.StatusOK, response)
 }

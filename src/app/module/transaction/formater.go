@@ -21,12 +21,8 @@ func FormatTransaction(data Transaction) TransactionFormat {
 
 func FormatListTransaction(data []Transaction) []TransactionFormat {
 	var format []TransactionFormat
-	for index, value := range data {
-		format.Id = data.Id
-		format.Code = data.Code
-		format.CampaignName = data.Campaign.Name
-		format.Amount = data.Amount
-		format.Status = data.Status
+	for _, trans := range data {
+		format = append(format, FormatTransaction(trans))
 	}
 
 	return format

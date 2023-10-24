@@ -34,7 +34,7 @@ func (r *repository) GetOne(transaction *Transaction) error {
 
 func (r *repository) GetByUser(userId int) ([]Transaction, error) {
 	var transaction []Transaction
-	err := r.db.InnerJoins("Campaign").Find(&transaction, "user_id=?", userId).Error
+	err := r.db.InnerJoins("Campaign").Find(&transaction, "transactions.user_id=?", userId).Error
 	if err != nil {
 		return transaction, err
 	}

@@ -24,6 +24,7 @@ func (s *Server) ConfigureRoutes() {
 	var module = []routes.Module{
 		routes.UserModule,
 		routes.CampaignModule,
+		routes.TransactionModule,
 	}
 	router := s.engine
 	router.Static("/images", "./public/images")

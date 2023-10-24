@@ -17,5 +17,4 @@ type Transaction struct {
 	CreatedBy    int
 	ModifiedBy   int
 	Campaign     campaign.Campaign
-	Type         string
 }
