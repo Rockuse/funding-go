@@ -25,7 +25,7 @@ func (r *repository) Add(transaction *Transaction) error {
 }
 
 func (r *repository) GetOne(transaction *Transaction) error {
-	err := r.db.Joins("campaign").Find(&transaction, "id=?", transaction.Id).Error
+	err := r.db.Joins("campaigns").Find(&transaction, "id=?", transaction.Id).Error
 	if err != nil {
 		return err
 	}
@@ -34,7 +34,9 @@ func (r *repository) GetOne(transaction *Transaction) error {
 
 func (r *repository) GetByUser(userId int) ([]Transaction, error) {
 	var transaction []Transaction
-	err := r.db.InnerJoins("Campaign").Find(&transaction, "transactions.user_id=?", userId).Error
+	err := r.db.Joins("campaigns").
+		Joins("campaign_images").
+		Find(&transaction, "transactions.user_id=?", userId).Error
 	if err != nil {
 		return transaction, err
 	}
