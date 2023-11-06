@@ -10,6 +10,7 @@ type Service interface {
 	Add(transaction InputTransaction) (Transaction, error)
 	GetById(data int) (Transaction, error)
 	GetByUser(data int) ([]Transaction, error)
+	GetByCampaignId(campaignId int) ([]Transaction, error)
 }
 type service struct {
 	repository Repository
@@ -55,4 +56,12 @@ func (s *service) GetByUser(userId int) ([]Transaction, error) {
 	}
 	fmt.Println(transaction)
 	return transaction, nil
+}
+
+func (s *service) GetByCampaignId(campaignId int) ([]Transaction, error) {
+	transaction, err := s.repository.GetByCampaign(campaignId)
+	if err != nil {
+		return transaction, err
+	}
+	return transaction,nil  
 }

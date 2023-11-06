@@ -6,6 +6,7 @@ type Repository interface {
 	Add(transaction *Transaction) error
 	GetOne(data *Transaction) error
 	GetByUser(userId int) ([]Transaction, error)
+	GetByCampaign(campaignId int) ([]Transaction, error)
 }
 
 type repository struct {
@@ -41,4 +42,14 @@ func (r *repository) GetByUser(userId int) ([]Transaction, error) {
 		return transaction, err
 	}
 	return transaction, nil
+}
+
+func (r *repository) GetByCampaign(campaignId int) ([]Transaction, error) {
+	var transaction []Transaction
+	err := r.db.Preload("users").Find(&transaction, "transactions.campaign_id=?", campaignId).Error
+	if err != nil {
+		return transaction, err
+	}
+	return transaction, nil
+
 }

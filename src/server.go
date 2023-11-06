@@ -33,7 +33,7 @@ func (s *Server) ConfigureRoutes() {
 	api.GET("/images/:folder", handler.SendFile)
 	for _, m := range module {
 		m.Routes(api, db)
-	}
+	} 
 }
 
 func (s *Server) Run() error {
