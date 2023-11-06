@@ -38,7 +38,7 @@ func (h *handler) GetTransactionById(c *gin.Context) {
 	commons := common.NewCommon(c)
 	id := c.Param("id")
 	userId, err := strconv.Atoi(id)
-	if err != nil && commons.ErrorHandler("Must Number", http.StatusBadRequest, commons.Error(err)) {
+	if err != nil && commons.ErrorHandler("Numbers only", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	data, err := h.service.GetById(userId)
@@ -58,6 +58,20 @@ func (h *handler) GetListTransaction(c *gin.Context) {
 	}
 	formated := FormatListTransaction(data)
 	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
+	c.JSON(http.StatusOK, response)
+}
 
+func (h *handler) GetTransactionByCampaignId(c *gin.Context) {
+	commons := common.NewCommon(c)
+	param := c.Param("id")
+	id, err := strconv.Atoi(param)
+	if err != nil && commons.ErrorHandler("Parse Error", http.StatusBadRequest, commons.Error(err)) {
+		return
+	}
+	data, err := h.service.GetByCampaignId(id)
+	if err != nil && commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
+		return
+	}
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", data)
 	c.JSON(http.StatusOK, response)
 }

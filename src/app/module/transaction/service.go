@@ -63,5 +63,5 @@ func (s *service) GetByCampaignId(campaignId int) ([]Transaction, error) {
 	if err != nil {
 		return transaction, err
 	}
-	return transaction,nil  
+	return transaction, nil
 }
