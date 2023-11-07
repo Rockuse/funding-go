@@ -21,11 +21,7 @@ func NewServer(dbConnection *gorm.DB) *Server {
 }
 
 func (s *Server) ConfigureRoutes() {
-	var module = []routes.Module{
-		routes.UserModule,
-		routes.CampaignModule,
-		routes.TransactionModule,
-	}
+	var module = routes.RegisteredModules()
 	router := s.engine
 	router.Static("/images", "./public/images")
 	db := s.db
@@ -33,7 +29,7 @@ func (s *Server) ConfigureRoutes() {
 	api.GET("/images/:folder", handler.SendFile)
 	for _, m := range module {
 		m.Routes(api, db)
-	} 
+	}
 }
 
 func (s *Server) Run() error {
