@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"fmt"
 	"funding/src/app/auth"
 	"funding/src/app/helper"
 	"funding/src/app/module/user"
@@ -50,8 +49,13 @@ func (a *authMiddleware) AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 		data := claim["data"].(map[string]interface{})
-		fmt.Println(data)
-		userId := int(data["id"].(float64))
+		id, ok := data["id"]
+		if !ok {
+			response := helper.ResponseHelper("Unauthorized ", http.StatusUnauthorized, "fail", err)
+			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
+			return
+		}
+		userId := int(id.(float64))
 		userData, err := userService.GetUserById(userId)
 		if err != nil {
 			response := helper.ResponseHelper("There is error", http.StatusNotFound, "fail", err)

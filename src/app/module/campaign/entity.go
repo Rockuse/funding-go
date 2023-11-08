@@ -31,8 +31,8 @@ type CampaignImage struct {
 	IsPrimary    bool   `json:"is_primary" binding:"required"`
 	ModifiedDate time.Time
 	CreatedDate  time.Time
-	CreatedBy    string
-	ModifiedBy   string
+	CreatedBy    int
+	ModifiedBy   int
 }
 
 type CampaignUri struct {

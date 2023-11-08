@@ -22,6 +22,7 @@ type Meta struct {
 }
 
 func ResponseHelper(message string, code int, status string, data interface{}) Response {
+
 	Meta := Meta{
 		Message: message,
 		Code:    code,
@@ -31,18 +32,19 @@ func ResponseHelper(message string, code int, status string, data interface{}) R
 		Meta: Meta,
 		Data: data,
 	}
+
 	return ResponseJSON
 }
 
 func FormatValidationError(err error) gin.H {
 	var errors []string
 	if err != nil {
+		fmt.Println(err)
 		for _, e := range err.(validator.ValidationErrors) {
 			errors = append(errors, e.Error())
 		}
 	}
 	errorMessage := gin.H{"errors": errors}
-
 	return errorMessage
 }
 
@@ -56,7 +58,7 @@ func PathUpload(dst ...string) (string, string) {
 		}
 		if len(dst)-1 == idx {
 			ext := strings.Split(str, ".")
-			fmt.Println(ext[len(ext)-1])
+			// fmt.Println(ext[len(ext)-1])
 			newPath += "/" + rename + "." + ext[len(ext)-1]
 			fileName += "/" + rename + "." + ext[len(ext)-1]
 			continue

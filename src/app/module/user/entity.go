@@ -15,8 +15,8 @@ type User struct {
 	Token            string
 	CreatedDate      time.Time
 	ModifiedDate     time.Time
-	CreatedBy        string
-	ModifiedBy       string
+	CreatedBy        int
+	ModifiedBy       int
 }
 
 type RegisterInput struct {

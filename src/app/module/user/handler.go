@@ -2,8 +2,8 @@ package user
 
 import (
 	"bytes"
-	"fmt"
 	"funding/src/app/auth"
+	"funding/src/app/common"
 	"funding/src/app/helper"
 	"io"
 	"net/http"
@@ -22,57 +22,40 @@ func NewUserHandler(userService Service) *userHandler {
 }
 
 func (h *userHandler) RegisterUser(c *gin.Context) {
-	check := c.MustGet("email_isAvailable")
 	var input RegisterInput
+	commons := common.NewCommon(c)
 	err := c.ShouldBindJSON(&input)
-	fmt.Println(check)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusUnprocessableEntity, "Fail", errors)
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, response)
+	if err != nil && commons.ErrorHandler("Data Gagal disimpan", http.StatusUnprocessableEntity, helper.FormatValidationError(err)) {
 		return
 	}
 	newUser, err := h.userService.RegisterUser(input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		response := helper.ResponseHelper("Data Gagal disimpan", http.StatusBadRequest, "fail", errors)
-		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Data Gagal disimpan", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	token, err := h.authService.GenerateToken(newUser)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
-		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+	formater := FormatUser(newUser)
+	token, err := h.authService.GenerateToken(formater)
+	if err != nil && commons.ErrorHandler("Data Gagal disimpan", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	formater := FormatUser(newUser, token)
-	response := helper.ResponseHelper("Data berhasil disimpan", http.StatusOK, "success", formater)
+	tokenFormated := auth.TokenFormater(token)
+	response := helper.ResponseHelper("Data berhasil disimpan", http.StatusOK, "success", tokenFormated)
 	c.JSON(http.StatusOK, response)
 }
 
 func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
+	commons := common.NewCommon(c)
 	ByteBody, _ := io.ReadAll(c.Request.Body)
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
 	var email EmailInput
 	err := c.ShouldBindJSON(&email)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		response := helper.ResponseHelper("format Email salah", http.StatusUnprocessableEntity, "fail", errors)
-		c.AbortWithStatusJSON(http.StatusUnprocessableEntity, response)
+	if err != nil && commons.ErrorHandler("format email salah", http.StatusUnprocessableEntity, helper.FormatValidationError(err)) {
 		return
 	}
 	isValid, err := h.userService.IsEmailAvailable(email)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Email gagal di cek", http.StatusBadRequest, "fail", errors)
-		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Email gagal di cek", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	if !isValid {
-		errors := gin.H{"errors": "Email sudah terdaftar"}
-		response := helper.ResponseHelper("Email sudah terdaftar", http.StatusBadRequest, "fail", errors)
-		c.AbortWithStatusJSON(http.StatusBadRequest, response)
+	if !isValid && commons.ErrorHandler("Email sudah terdaftar", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	c.Request.Body = io.NopCloser(bytes.NewBuffer(ByteBody))
@@ -81,31 +64,25 @@ func (h *userHandler) CheckEmailAvailibility(c *gin.Context) {
 }
 
 func (h *userHandler) Login(c *gin.Context) {
+	commons := common.NewCommon(c)
 	var input LoginInput
 	err := c.ShouldBindJSON(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		response := helper.ResponseHelper("Login gagal", http.StatusUnprocessableEntity, "fail", errors)
-		c.JSON(http.StatusUnprocessableEntity, response)
+	if err != nil && commons.ErrorHandler("Email gagal di cek", http.StatusUnprocessableEntity, helper.FormatValidationError(err)) {
 		return
 	}
 	userLogin, err := h.userService.Login(input)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Email/Password salah", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+
+	if err != nil && commons.ErrorHandler("Email/Password salah", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	formatter := FormatUser(userLogin, "")
+	formatter := FormatUser(userLogin)
 	token, err := h.authService.GenerateToken(formatter)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Data gagal disimpan", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	formatter = FormatUser(userLogin, token)
-	response := helper.ResponseHelper("Berhasil Login", http.StatusOK, "success", formatter)
+	tokenFormated := auth.TokenFormater(token)
+	response := helper.ResponseHelper("Berhasil Login", http.StatusOK, "success", tokenFormated)
+
 	c.JSON(http.StatusOK, response)
 	//User input
 	//input ditangkap handler
@@ -116,11 +93,9 @@ func (h *userHandler) Login(c *gin.Context) {
 }
 
 func (h *userHandler) UploadAvatar(c *gin.Context) {
+	commons := common.NewCommon(c)
 	file, err := c.FormFile("avatar")
-	if err != nil {
-		errors := gin.H{"is_uploaded": false}
-		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Gagal upload avatar", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	//dapat dari JWT
@@ -128,18 +103,12 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 	userID := currentUser.Id
 	newPath, pathName := helper.PathUpload("user", strconv.Itoa(userID), file.Filename)
 	err = c.SaveUploadedFile(file, newPath)
-	if err != nil {
-		errors := gin.H{"is_uploaded": false}
-		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Gagal upload avatar", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 
 	_, err = h.userService.UpdateAvatar(userID, pathName)
-	if err != nil {
-		errors := gin.H{"is_uploaded": false}
-		response := helper.ResponseHelper("Gagal upload avatar", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Gagal upload avatar", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
 	data := gin.H{"is_uploaded": true}
@@ -153,21 +122,17 @@ func (h *userHandler) UploadAvatar(c *gin.Context) {
 }
 
 func (h *userHandler) GetUserDataById(c *gin.Context) {
+	commons := common.NewCommon(c)
 	idstr := c.Param("id")
 	id, err := strconv.Atoi(idstr)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Error", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
-	}
-	userData, err := h.userService.GetUserById(id)
-	if err != nil {
-		errors := gin.H{"errors": err}
-		response := helper.ResponseHelper("Error", http.StatusBadRequest, "fail", errors)
-		c.JSON(http.StatusBadRequest, response)
+	if err != nil && commons.ErrorHandler("Error", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	formater := FormatUser(userData, "tes")
+	userData, err := h.userService.GetUserById(id)
+	if err != nil && commons.ErrorHandler("Error", http.StatusBadRequest, commons.Error(err)) {
+		return
+	}
+	formater := FormatUser(userData)
 	response := helper.ResponseHelper("Get User", http.StatusOK, "success", formater)
 	c.JSON(http.StatusOK, response)
 }

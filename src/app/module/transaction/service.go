@@ -23,7 +23,12 @@ func NewService(repository Repository) *service {
 func (s *service) Add(input InputTransaction) (Transaction, error) {
 	var data Transaction
 	data.Id = util.Uuid()
-	data.Code = input.Code
+	code, err := util.CodeGenerator("tran")
+	if err != nil {
+		return data, err
+	}
+	fmt.Println(code)
+	data.Code = code
 	data.CampaignId = input.CampaignId
 	data.UserId = input.UserId
 	data.Amount = input.Amount
@@ -32,7 +37,7 @@ func (s *service) Add(input InputTransaction) (Transaction, error) {
 	data.CreatedDate = time.Now()
 	data.CreatedBy = input.UserId
 	data.ModifiedBy = input.UserId
-	err := s.repository.Add(&data)
+	err = s.repository.Add(&data)
 	if err != nil {
 		return data, err
 	}

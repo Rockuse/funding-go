@@ -1,7 +1,6 @@
 package user
 
 import (
-	"strconv"
 	"time"
 
 	"gorm.io/gorm"
@@ -52,7 +51,7 @@ func (r *repository) FindById(ID int) (User, error) {
 }
 
 func (r *repository) Update(user User) (User, error) {
-	err := r.db.Model(&user).Updates(User{Avatar_file_name: user.Avatar_file_name, ModifiedDate: time.Now(), ModifiedBy: strconv.Itoa(user.Id)}).Error
+	err := r.db.Model(&user).Updates(User{Avatar_file_name: user.Avatar_file_name, ModifiedDate: time.Now(), ModifiedBy: user.Id}).Error
 	if err != nil {
 		return user, err
 	}

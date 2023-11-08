@@ -4,7 +4,6 @@ import (
 	"errors"
 	"fmt"
 	"funding/src/app/module/user"
-	"strconv"
 	"time"
 
 	"github.com/gosimple/slug"
@@ -120,7 +119,7 @@ func (s *service) UploadCampaignImage(input ImageInput, filePath string) (Campai
 	newImage.FileName = filePath
 	newImage.IsPrimary = input.IsPrimary
 	newImage.CreatedDate = time.Now()
-	newImage.CreatedBy = strconv.Itoa(input.UserId)
+	newImage.CreatedBy = input.UserId
 
 	result, err := s.repository.CreateImage(newImage)
 	if err != nil {

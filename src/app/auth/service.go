@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GenerateToken(userID interface{}) (string, error)
+	GenerateToken(data interface{}) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 }
 

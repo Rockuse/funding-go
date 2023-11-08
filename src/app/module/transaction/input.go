@@ -1,9 +1,8 @@
 package transaction
 
 type InputTransaction struct {
-	Code       string
-	CampaignId int
-	UserId     int
-	Amount     int
-	Status     string
+	CampaignId int    `json:"campaign_id"`
+	UserId     int    `json:"user_id"`
+	Amount     int    `json:"amount"`
+	Status     string `json:"status"`
 }
