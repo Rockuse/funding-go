@@ -1,6 +1,7 @@
 package transaction
 
 import (
+	"fmt"
 	"funding/src/app/common"
 	"funding/src/app/helper"
 	"funding/src/app/module/user"
@@ -23,6 +24,7 @@ func (h *handler) AddTransaction(c *gin.Context) {
 	commons := common.NewCommon(c)
 	userData := c.MustGet("currentUser").(user.User)
 	err := c.ShouldBindJSON(&input)
+	fmt.Println(&input)
 	if err != nil && commons.ErrorHandler("Validation Error", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
 	}

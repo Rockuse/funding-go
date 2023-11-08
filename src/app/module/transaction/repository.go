@@ -18,7 +18,7 @@ func NewRepository(db *gorm.DB) *repository {
 }
 
 func (r *repository) Add(transaction *Transaction) error {
-	err := r.db.Create(&transaction).Error
+	err := r.db.Preload("users").Preload("campaigns").Create(&transaction).Error
 	if err != nil {
 		return err
 	}

@@ -61,7 +61,7 @@ func (h *handler) SaveCampaign(c *gin.Context) {
 	var input CampaignInput
 	err := c.ShouldBindJSON(&input)
 	input.UserId = currentUser.Id
-	input.CreatedBy = strconv.Itoa(currentUser.Id)
+	input.CreatedBy = currentUser.Id
 
 	if err != nil && commons.ErrorHandler("Error Input", http.StatusBadRequest, helper.FormatValidationError(err)) {
 		return
@@ -88,7 +88,7 @@ func (h *handler) UpdateCampaign(c *gin.Context) {
 	}
 
 	input.UserId = currentUser.Id
-	input.CreatedBy = strconv.Itoa(currentUser.Id)
+	input.CreatedBy = currentUser.Id
 	id := c.Param("id")
 	intId, err := strconv.Atoi(id)
 	input.Id = intId

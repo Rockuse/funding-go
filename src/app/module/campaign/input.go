@@ -10,12 +10,12 @@ type ImageInput struct {
 
 type CampaignInput struct {
 	Id          int
-	UserId      int    `json:"userid"`
+	UserId      int    `json:"user_id"`
 	Name        string `json:"name" binding:"required"`
 	ShortDesc   string `json:"shortdesc" binding:"required"`
 	Description string `json:"description"`
 	GoalAmmount int    `json:"goal_ammount"`
 	Perks       string `json:"perks"`
-	CreatedBy   string
+	CreatedBy   int
 	User        user.User
 }

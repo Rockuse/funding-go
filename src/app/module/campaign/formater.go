@@ -15,7 +15,7 @@ type CampaignFormat struct {
 	CurrentAmmount int       `json:"current_ammount"`
 	Slug           string    `json:"slug"`
 	CreatedDate    time.Time `json:"created_date"`
-	CreatedBy      string    `json:"created_by"`
+	CreatedBy      int       `json:"created_by"`
 }
 
 type CampaignDetailFormat struct {

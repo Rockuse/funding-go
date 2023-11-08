@@ -18,8 +18,8 @@ type Campaign struct {
 	Slug           string
 	ModifiedDate   time.Time
 	CreatedDate    time.Time
-	CreatedBy      string
-	ModifiedBy     string
+	CreatedBy      int
+	ModifiedBy     int
 	CampaignImages []CampaignImage
 	User           user.User
 }
