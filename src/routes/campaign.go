@@ -22,7 +22,7 @@ var CampaignModule = Module{
 		campaignApi := api.Group("/campaign")
 		campaignApi.GET("/", campaignHandler.GetListCampaign)                                     // Get All Campaign
 		campaignApi.GET("/:id", midService.AuthMiddleware(), campaignHandler.GetListCampaignById) // get Campaign by User ID
-		campaignApi.GET("/detail/:id", midService.AuthMiddleware(), campaignHandler.GetDetail)    // Get Campaign Detail by ID
+		campaignApi.GET("/:id/detail", midService.AuthMiddleware(), campaignHandler.GetDetail)    // Get Campaign Detail by ID
 		campaignApi.POST("/", midService.AuthMiddleware(), campaignHandler.SaveCampaign)          // Add Campaign
 		campaignApi.PUT("/:id", midService.AuthMiddleware(), campaignHandler.UpdateCampaign)      // Edit Campaign
 		campaignApi.POST("/image", midService.AuthMiddleware(), campaignHandler.SaveImages)       // Upload Image

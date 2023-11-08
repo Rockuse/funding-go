@@ -11,6 +11,5 @@ type Module struct {
 }
 
 func RegisteredModules() []Module {
-	var modules = []Module{TransactionModule, CampaignModule, UserModule}
-	return modules
+	return []Module{TransactionModule, CampaignModule, UserModule}
 }

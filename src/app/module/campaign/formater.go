@@ -1,7 +1,6 @@
 package campaign
 
 import (
-	"strconv"
 	"strings"
 	"time"
 )
@@ -49,7 +48,7 @@ func FormatCampaign(data Campaign, host string) CampaignFormat {
 		CreatedBy:      data.CreatedBy,
 	}
 	if len(data.CampaignImages) > 0 {
-		formater.ImageURL = host + "/images/" + strconv.Itoa(data.CampaignImages[0].Id)
+		formater.ImageURL = host + "/images" + data.CampaignImages[0].FileName
 	}
 
 	return formater

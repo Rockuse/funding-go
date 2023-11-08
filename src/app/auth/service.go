@@ -7,7 +7,7 @@ import (
 )
 
 type Service interface {
-	GenerateToken(userID int) (string, error)
+	GenerateToken(userID interface{}) (string, error)
 	ValidateToken(token string) (*jwt.Token, error)
 }
 
@@ -20,9 +20,9 @@ func NewService() *jwtService {
 	return &jwtService{}
 }
 
-func (j *jwtService) GenerateToken(userID int) (string, error) {
+func (j *jwtService) GenerateToken(data interface{}) (string, error) {
 	claim := jwt.MapClaims{}
-	claim["user_id"] = userID
+	claim["data"] = data
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claim)
 	signedToken, err := token.SignedString(SECRET_KEY)
 	if err != nil {
@@ -40,7 +40,7 @@ func (j *jwtService) ValidateToken(token string) (*jwt.Token, error) {
 		return []byte(SECRET_KEY), nil
 	})
 	if err != nil {
-		return toke, errors.New("Validate Error")
+		return toke, errors.New("validate Error")
 	}
 	return toke, nil
 }

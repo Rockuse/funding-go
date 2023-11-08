@@ -39,7 +39,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 		c.AbortWithStatusJSON(http.StatusBadRequest, response)
 		return
 	}
-	token, err := h.authService.GenerateToken(newUser.Id)
+	token, err := h.authService.GenerateToken(newUser)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
@@ -96,14 +96,15 @@ func (h *userHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	token, err := h.authService.GenerateToken(userLogin.Id)
+	formatter := FormatUser(userLogin, "")
+	token, err := h.authService.GenerateToken(formatter)
 	if err != nil {
 		errors := gin.H{"errors": err}
 		response := helper.ResponseHelper("Data gagal disimpan", http.StatusOK, "success", errors)
 		c.JSON(http.StatusBadRequest, response)
 		return
 	}
-	formatter := FormatUser(userLogin, token)
+	formatter = FormatUser(userLogin, token)
 	response := helper.ResponseHelper("Berhasil Login", http.StatusOK, "success", formatter)
 	c.JSON(http.StatusOK, response)
 	//User input
