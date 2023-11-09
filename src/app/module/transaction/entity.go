@@ -2,7 +2,6 @@ package transaction
 
 import (
 	"funding/src/app/module/campaign"
-	"funding/src/app/module/user"
 	"time"
 )
 
@@ -14,7 +13,6 @@ type Transaction struct {
 	Amount       int
 	Status       int
 	Campaign     campaign.Campaign
-	User         user.User
 	ModifiedDate time.Time
 	CreatedDate  time.Time
 	CreatedBy    int

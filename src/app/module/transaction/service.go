@@ -1,7 +1,6 @@
 package transaction
 
 import (
-	"fmt"
 	util "funding/src/app/common/utilities"
 	"time"
 )
@@ -27,7 +26,6 @@ func (s *service) Add(input InputTransaction) (Transaction, error) {
 	if err != nil {
 		return data, err
 	}
-	fmt.Println(code)
 	data.Code = code
 	data.CampaignId = input.CampaignId
 	data.UserId = input.UserId
@@ -59,7 +57,6 @@ func (s *service) GetByUser(userId int) ([]Transaction, error) {
 	if err != nil {
 		return transaction, err
 	}
-	fmt.Println(transaction)
 	return transaction, nil
 }
 

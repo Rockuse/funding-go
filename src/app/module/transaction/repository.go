@@ -18,7 +18,7 @@ func NewRepository(db *gorm.DB) *repository {
 }
 
 func (r *repository) Add(transaction *Transaction) error {
-	err := r.db.Preload("users").Preload("campaigns").Create(&transaction).Error
+	err := r.db.Create(&transaction).Error
 	if err != nil {
 		return err
 	}
@@ -35,9 +35,10 @@ func (r *repository) GetOne(transaction *Transaction) error {
 
 func (r *repository) GetByUser(userId int) ([]Transaction, error) {
 	var transaction []Transaction
-	err := r.db.Joins("join campaigns on campaigns.id = transactions.campaign_id").
-		Joins("join campaign_images on campaign_images.campaign_id = campaigns.id").
-		Find(&transaction, "transactions.user_id=?", userId).Error
+	// err := r.db.Joins("join campaigns on campaigns.id = transactions.campaign_id").
+	// 	Joins("left join campaign_images on campaign_images.campaign_id = campaigns.id").
+	// 	Find(&transaction, "transactions.user_id=?", userId).Error
+	err := r.db.Preload("Campaign.User").Find(&transaction, "transactions.user_id=?", userId).Error
 	if err != nil {
 		return transaction, err
 	}

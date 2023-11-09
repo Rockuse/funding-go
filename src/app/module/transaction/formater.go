@@ -4,7 +4,7 @@ type TransactionFormat struct {
 	Id           int    `json:"id"`
 	Code         string `json:"code"`
 	CampaignName string `json:"campaign_name"`
-	UserId       int    `json:"user_id"`
+	UserId       string `json:"user_name"`
 	Amount       int    `json:"amount"`
 	Status       int    `json:"status"`
 }
@@ -14,6 +14,7 @@ func FormatTransaction(data Transaction) TransactionFormat {
 	format.Id = data.Id
 	format.Code = data.Code
 	format.CampaignName = data.Campaign.Name
+	format.UserId = data.Campaign.User.Name
 	format.Amount = data.Amount
 	format.Status = data.Status
 	return format
