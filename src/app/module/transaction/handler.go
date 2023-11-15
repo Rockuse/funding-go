@@ -74,6 +74,7 @@ func (h *handler) GetTransactionByCampaignId(c *gin.Context) {
 	if err != nil && commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", data)
+	formated := FormatListTransaction(data)
+	response := helper.ResponseHelper("Data berhasil ditampilkan", http.StatusOK, "success", formated)
 	c.JSON(http.StatusOK, response)
 }

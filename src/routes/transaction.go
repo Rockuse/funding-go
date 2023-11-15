@@ -20,6 +20,6 @@ var TransactionModule = Module{
 		transactionApi.POST("", midService.AuthMiddleware(), transactionHandler.AddTransaction)
 		transactionApi.GET("", midService.AuthMiddleware(), transactionHandler.GetListTransaction)
 		transactionApi.GET("/:id", midService.AuthMiddleware(), transactionHandler.GetTransactionById)
-		transactionApi.GET("/:id/transaction", midService.AuthMiddleware(), transactionHandler.GetTransactionByCampaignId)
+		transactionApi.GET("/campaign/:id", midService.AuthMiddleware(), transactionHandler.GetTransactionByCampaignId)
 	},
 }
