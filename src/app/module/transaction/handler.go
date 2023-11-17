@@ -65,12 +65,14 @@ func (h *handler) GetListTransaction(c *gin.Context) {
 
 func (h *handler) GetTransactionByCampaignId(c *gin.Context) {
 	commons := common.NewCommon(c)
+	currentUser := c.MustGet("currentUser").(user.User)
+	userId := currentUser.Id
 	param := c.Param("id")
 	id, err := strconv.Atoi(param)
 	if err != nil && commons.ErrorHandler("Parse Error", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}
-	data, err := h.service.GetByCampaignId(id)
+	data, err := h.service.GetByCampaignId(id, userId)
 	if err != nil && commons.ErrorHandler("Error DB", http.StatusBadRequest, commons.Error(err)) {
 		return
 	}

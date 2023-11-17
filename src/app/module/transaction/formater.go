@@ -1,6 +1,9 @@
 package transaction
 
-import "time"
+import (
+	"sort"
+	"time"
+)
 
 type TransactionFormat struct {
 	Id           int       `json:"id"`
@@ -25,6 +28,9 @@ func FormatTransaction(data Transaction) TransactionFormat {
 }
 
 func FormatListTransaction(data []Transaction) []TransactionFormat {
+	sort.Slice(data, func(i, j int) bool {
+		return data[i].CreatedDate.After(data[j].CreatedDate)
+	})
 	if len(data) == 0 {
 		return []TransactionFormat{}
 	}
